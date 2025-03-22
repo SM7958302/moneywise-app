@@ -37,6 +37,12 @@ export default function ProgressPage() {
     completionPercentage: (progress.completedScenarios.length / achievements.length) * 100
   }
 
+  const calculateProgress = (category: string) => {
+    const completed = progress.completedScenarios.filter(item => item === category).length
+    const total = achievements.filter(item => item.id === category).length
+    return Math.min(100, (completed / total) * 100)
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Header />
@@ -93,7 +99,7 @@ export default function ProgressPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <Progress value={isCompleted ? 100 : 0} className="h-2 bg-secondary" />
+                    <Progress value={calculateProgress(achievement.id)} className="h-2 bg-secondary" />
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
                         {isCompleted ? "Completed" : "Not started"}

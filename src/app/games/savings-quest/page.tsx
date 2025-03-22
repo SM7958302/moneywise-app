@@ -1,312 +1,263 @@
 "use client"
 
-import { useState } from "react"
-import { useGame } from "@/context/GameContext"
+import React, { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { savingScenarios, type Scenario, type Difficulty, type ScenarioOption } from "@/lib/game-data"
+import { useToast, Toast } from "@/components/ui/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
 
-interface Scenario {
-  id: number
-  title: string
-  description: string
-  options: {
-    text: string
-    impact: {
-      savings?: number
-      debt?: number
-      income?: number
-      health?: number
-      happiness?: number
-      risk?: number
-      xp: number
-    }
-    feedback: string
-  }[]
-}
-
-const scenarios: Scenario[] = [
-  {
-    id: 1,
-    title: "Emergency Fund",
-    description: "You've just started working and want to build an emergency fund. What's your first step?",
-    options: [
-      {
-        text: "Set up automatic transfers",
-        impact: { savings: 1000, happiness: 10, xp: 60 },
-        feedback: "Great choice! Automatic transfers make saving consistent and effortless.",
-      },
-      {
-        text: "Cut all expenses",
-        impact: { savings: 800, happiness: -10, xp: 40 },
-        feedback: "While cutting expenses helps, balance is important for long-term success.",
-      },
-      {
-        text: "Save what's left",
-        impact: { savings: 400, xp: 20 },
-        feedback: "Saving what's left often means saving nothing. Make saving a priority.",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Savings Goal",
-    description: "You want to save for a vacation. How do you approach this goal?",
-    options: [
-      {
-        text: "Create a dedicated account",
-        impact: { savings: 1200, happiness: 10, xp: 70 },
-        feedback: "Separate accounts help track progress and prevent spending from other goals.",
-      },
-      {
-        text: "Save in main account",
-        impact: { savings: 800, xp: 40 },
-        feedback: "While this works, separate accounts can help prevent accidental spending.",
-      },
-      {
-        text: "Use credit card",
-        impact: { debt: 2000, happiness: -10, xp: 20 },
-        feedback: "Using credit for vacations can lead to high interest charges and debt.",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "Windfall Money",
-    description: "You received a $5000 bonus at work. How do you use it?",
-    options: [
-      {
-        text: "Split between savings and fun",
-        impact: { savings: 3000, happiness: 20, xp: 80 },
-        feedback: "Balancing saving and enjoyment is key to maintaining good financial habits.",
-      },
-      {
-        text: "Save it all",
-        impact: { savings: 5000, happiness: 5, xp: 60 },
-        feedback: "While saving is important, treating yourself occasionally can help maintain motivation.",
-      },
-      {
-        text: "Spend it all",
-        impact: { savings: 0, happiness: 30, xp: 20 },
-        feedback: "While fun, spending windfalls without saving can lead to missed opportunities.",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "Savings Challenge",
-    description: "Your friend suggests a \"no-spend\" month challenge. How do you participate?",
-    options: [
-      {
-        text: "Set specific rules",
-        impact: { savings: 1500, happiness: 10, xp: 70 },
-        feedback: "Clear rules help maintain discipline while being realistic about needs.",
-      },
-      {
-        text: "Go all in",
-        impact: { savings: 2000, happiness: -20, xp: 50 },
-        feedback: "While effective, extreme challenges can be hard to maintain long-term.",
-      },
-      {
-        text: "Track expenses first",
-        impact: { savings: 800, xp: 40 },
-        feedback: "Understanding spending patterns is crucial before making changes.",
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "Savings vs. Debt",
-    description: "You have both savings and credit card debt. What's your priority?",
-    options: [
-      {
-        text: "Build emergency fund first",
-        impact: { savings: 1000, debt: 200, xp: 60 },
-        feedback: "Having an emergency fund prevents new debt when unexpected expenses arise.",
-      },
-      {
-        text: "Pay off debt first",
-        impact: { savings: 500, debt: -1000, xp: 70 },
-        feedback: "Paying high-interest debt first can save money in the long run.",
-      },
-      {
-        text: "Split between both",
-        impact: { savings: 800, debt: -500, xp: 80 },
-        feedback: "Balancing both goals helps build savings while reducing debt.",
-      },
-    ],
-  },
-  {
-    id: 6,
-    title: "Long-term Savings",
-    description: "You're planning for retirement. What's your savings strategy?",
-    options: [
-      {
-        text: "Start with 401(k)",
-        impact: { savings: 2000, happiness: 10, xp: 90 },
-        feedback: "Employer-sponsored plans often include matching contributions - don't miss out!",
-      },
-      {
-        text: "Save in regular account",
-        impact: { savings: 1500, xp: 50 },
-        feedback: "While saving is good, tax-advantaged accounts can grow your money faster.",
-      },
-      {
-        text: "Wait until later",
-        impact: { savings: 0, xp: 20 },
-        feedback: "Starting early takes advantage of compound interest - don't delay!",
-      },
-    ],
-  },
-]
-
 export default function SavingsQuestGame() {
-  const { addXP, level, xp, xpToNextLevel } = useGame()
-  const [currentScenario, setCurrentScenario] = useState(0)
-  const [gameState, setGameState] = useState({
-    savings: 5000,
+  const [currentScenario, setCurrentScenario] = useState<Scenario | null>(null)
+  const [selectedOption, setSelectedOption] = useState<ScenarioOption | null>(null)
+  const [timeLeft, setTimeLeft] = useState(30)
+  const [playerStats, setPlayerStats] = useState({
+    savings: 1000,
     debt: 0,
-    income: 3000,
+    income: 2000,
     health: 100,
-    happiness: 50,
+    happiness: 100,
+    discipline: 100,
     risk: 0,
+    xp: 0,
+    level: 1
   })
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [feedback, setFeedback] = useState("")
-  const [gameComplete, setGameComplete] = useState(false)
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy")
+  const [showDifficultySelector, setShowDifficultySelector] = useState(true)
+  const [gameOver, setGameOver] = useState(false)
+  const { toast, toasts } = useToast()
 
-  const handleChoice = (option: Scenario["options"][0]) => {
-    const newState = { ...gameState }
-    Object.entries(option.impact).forEach(([key, value]) => {
-      if (key === "xp") {
-        addXP(value)
-      } else {
-        newState[key as keyof typeof newState] += value
+  useEffect(() => {
+    if (!showDifficultySelector && !gameOver) {
+      loadNextScenario()
+    }
+  }, [showDifficultySelector, gameOver])
+
+  useEffect(() => {
+    if (!showDifficultySelector && !gameOver && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            handleTimeUp()
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+
+      return () => clearInterval(timer)
+    }
+  }, [showDifficultySelector, gameOver, timeLeft])
+
+  const handleTimeUp = () => {
+    if (currentScenario) {
+      const randomOption = currentScenario.options[Math.floor(Math.random() * currentScenario.options.length)]
+      handleOptionSelect(randomOption)
+    }
+  }
+
+  const loadNextScenario = () => {
+    const difficultyScenarios = savingScenarios.filter(s => s.difficulty === difficulty)
+    if (difficultyScenarios.length === 0) {
+      setGameOver(true)
+      return
+    }
+
+    const randomIndex = Math.floor(Math.random() * difficultyScenarios.length)
+    const nextScenario = difficultyScenarios[randomIndex]
+    setCurrentScenario(nextScenario)
+    setSelectedOption(null)
+    setTimeLeft(30)
+  }
+
+  const handleOptionSelect = (option: ScenarioOption) => {
+    if (selectedOption) return // Prevent multiple selections
+
+    setSelectedOption(option)
+    setTimeLeft(0) // Stop the timer
+
+    // Update player stats
+    setPlayerStats(prev => {
+      const newStats = {
+        ...prev,
+        savings: Math.max(0, prev.savings + (option.impact.savings ?? 0)),
+        debt: Math.max(0, prev.debt + (option.impact.debt ?? 0)),
+        income: Math.max(0, prev.income + (option.impact.income ?? 0)),
+        health: Math.min(100, Math.max(0, prev.health + (option.impact.health ?? 0))),
+        happiness: Math.min(100, Math.max(0, prev.happiness + (option.impact.happiness ?? 0))),
+        discipline: Math.min(100, Math.max(0, prev.discipline + (option.impact.discipline ?? 0))),
+        risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
+        xp: prev.xp + option.impact.xp,
+        level: Math.floor(prev.xp / 1000) + 1
       }
+      return newStats
     })
-    setGameState(newState)
-    setFeedback(option.feedback)
-    setShowFeedback(true)
 
+    // Show feedback and move to next scenario after a delay
     setTimeout(() => {
-      if (currentScenario < scenarios.length - 1) {
-        setCurrentScenario(currentScenario + 1)
-        setShowFeedback(false)
-      } else {
-        setGameComplete(true)
-      }
+      loadNextScenario()
     }, 2000)
   }
 
-  const resetGame = () => {
-    setCurrentScenario(0)
-    setGameState({
-      savings: 5000,
+  const getDifficultyColor = (diff: Difficulty) => {
+    switch (diff) {
+      case "easy": return "text-green-500"
+      case "medium": return "text-yellow-500"
+      case "hard": return "text-red-500"
+    }
+  }
+
+  const handleDifficultySelect = (selectedDifficulty: Difficulty) => {
+    setDifficulty(selectedDifficulty)
+    setShowDifficultySelector(false)
+    setPlayerStats({
+      savings: 1000,
       debt: 0,
-      income: 3000,
+      income: 2000,
       health: 100,
-      happiness: 50,
+      happiness: 100,
+      discipline: 100,
       risk: 0,
+      xp: 0,
+      level: 1
     })
-    setShowFeedback(false)
-    setGameComplete(false)
+  }
+
+  if (showDifficultySelector) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Select Difficulty</h1>
+          <p className="text-gray-600 mb-6">Choose your difficulty level to start the game:</p>
+          <div className="grid gap-4">
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("easy")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-green-500">Easy</span>
+                <span className="text-sm text-gray-500">Basic savings concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("medium")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500">Medium</span>
+                <span className="text-sm text-gray-500">Intermediate savings concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("hard")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-red-500">Hard</span>
+                <span className="text-sm text-gray-500">Advanced savings concepts</span>
+              </div>
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
+  if (!currentScenario) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Savings Quest</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">
-            Level {level} • {xp}/{xpToNextLevel} XP
+    <div className="container mx-auto p-4">
+      <Card className="p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Savings Quest</h1>
+          <div className="flex items-center gap-4">
+            <span className={`font-semibold ${getDifficultyColor(difficulty)}`}>
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDifficultySelector(true)}
+            >
+              Change Difficulty
+            </Button>
           </div>
-          <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
         </div>
-      </div>
 
-      {!gameComplete ? (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScenario}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">
-                  Scenario {currentScenario + 1} of {scenarios.length}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">
-                      {scenarios[currentScenario].title}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {scenarios[currentScenario].description}
-                    </p>
-                  </div>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">{currentScenario.title}</h2>
+          <p className="text-gray-600">{currentScenario.description}</p>
+        </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {scenarios[currentScenario].options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="h-auto py-4"
-                        onClick={() => handleChoice(option)}
-                      >
-                        {option.text}
-                      </Button>
-                    ))}
-                  </div>
+        <div className="grid gap-4 mb-6">
+          {currentScenario.options.map((option, index) => (
+            <Button
+              key={index}
+              variant={selectedOption === option ? "default" : "outline"}
+              className="w-full text-left justify-start"
+              onClick={() => handleOptionSelect(option)}
+              disabled={selectedOption !== null}
+            >
+              {option.text}
+            </Button>
+          ))}
+        </div>
 
-                  {showFeedback && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-4 bg-primary/10 rounded-lg"
-                    >
-                      {feedback}
-                    </motion.div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </AnimatePresence>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Game Complete!</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p>Congratulations on completing Savings Quest!</p>
-              <p>Final Stats:</p>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Savings: ${gameState.savings}</li>
-                <li>Debt: ${gameState.debt}</li>
-                <li>Income: ${gameState.income}</li>
-                <li>Health: {gameState.health}%</li>
-                <li>Happiness: {gameState.happiness}%</li>
-                <li>Risk Level: {gameState.risk}%</li>
-              </ul>
-              <div className="flex gap-4">
-                <Button onClick={resetGame}>Play Again</Button>
-                <ShareButton
-                  title="I completed Savings Quest!"
-                  text={`I reached level ${level} and learned about saving money! Can you beat my score?`}
-                />
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold mb-2">Your Stats</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Savings</p>
+                <Progress value={(playerStats.savings / 5000) * 100} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Debt</p>
+                <Progress value={(playerStats.debt / 5000) * 100} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Health</p>
+                <Progress value={playerStats.health} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Happiness</p>
+                <Progress value={playerStats.happiness} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Discipline</p>
+                <Progress value={playerStats.discipline} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Risk</p>
+                <Progress value={playerStats.risk} className="h-2" />
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Progress</h3>
+            <div className="flex items-center gap-4">
+              <Progress value={(playerStats.xp / (playerStats.level * 100)) * 100} className="h-2 flex-1" />
+              <span className="text-sm font-medium">Level {playerStats.level}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+      <Toast toasts={toasts} />
     </div>
   )
 } 

@@ -149,28 +149,34 @@ export const learningModules = [
 
 export type Difficulty = "easy" | "medium" | "hard"
 
-export interface Scenario {
+export type Scenario = {
   id: string
   title: string
   description: string
-  difficulty: Difficulty
   options: ScenarioOption[]
+  difficulty: Difficulty
 }
 
-export interface ScenarioOption {
+export type ScenarioOption = {
   text: string
   impact: {
-    savings: number
-    debt: number
-    income: number
+    savings?: number
+    debt?: number
+    income?: number
     health?: number
     happiness?: number
     discipline?: number
+    portfolio?: number
+    cash?: number
+    knowledge?: number
     risk: number
     xp: number
   }
   feedback: string
-  isCorrect: boolean
+  miniGame?: {
+    type: "budget_planner" | "stock_picker" | "savings_challenge"
+    bonus: number
+  }
 }
 
 // Easy scenarios (basic financial concepts)
@@ -193,7 +199,10 @@ const easyScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "While it's tempting to spend on wants, saving less now means less financial security later. Consider setting aside some money for emergencies.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Follow the 50/30/20 rule strictly",
@@ -207,7 +216,10 @@ const easyScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings. This is a sustainable approach to money management.",
-        isCorrect: true
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Save everything and spend nothing",
@@ -221,7 +233,10 @@ const easyScenarios: Scenario[] = [
           xp: 35
         },
         feedback: "While saving is important, completely avoiding spending can impact your well-being. Remember to find a balance between saving and enjoying life.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -243,7 +258,10 @@ const easyScenarios: Scenario[] = [
           xp: 50
         },
         feedback: "Great choice! Setting a fixed monthly savings amount helps you build a consistent saving habit.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Save whatever is left at the end of the month",
@@ -257,7 +275,10 @@ const easyScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "This approach often leads to inconsistent savings. It's better to save first and spend what's left.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       },
       {
         text: "Take out a loan to buy it immediately",
@@ -271,7 +292,10 @@ const easyScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Taking on debt for non-essential items can lead to financial stress. Consider saving up instead.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -293,7 +317,10 @@ const easyScenarios: Scenario[] = [
           xp: 40
         },
         feedback: "Smart approach! Understanding your spending patterns helps create a realistic budget.",
-        isCorrect: true
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Guess your expenses and create a budget",
@@ -307,7 +334,10 @@ const easyScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Guessing expenses often leads to overspending. Track your actual spending for better accuracy.",
-        isCorrect: false
+        miniGame: {
+          type: "budget_planner",
+          bonus: 15
+        }
       },
       {
         text: "Don't create a budget and spend freely",
@@ -321,7 +351,10 @@ const easyScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Without a budget, it's easy to overspend and lose track of your finances.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -344,7 +377,10 @@ const easyScenarios: Scenario[] = [
           xp: 50
         },
         feedback: "Great choice! A savings account helps you build an emergency fund and earn interest.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Checking account with no fees",
@@ -359,7 +395,10 @@ const easyScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "A checking account is good for daily expenses, but consider having both checking and savings accounts.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       },
       {
         text: "No bank account, keep cash at home",
@@ -374,7 +413,10 @@ const easyScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Keeping cash at home is risky and you miss out on interest earnings. A bank account is safer and more beneficial.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -397,7 +439,10 @@ const easyScenarios: Scenario[] = [
           xp: 45
         },
         feedback: "Smart shopping! Making a list helps you avoid impulse purchases and stick to your budget.",
-        isCorrect: true
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Buy whatever looks good",
@@ -412,7 +457,10 @@ const easyScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Impulse buying can lead to overspending and food waste. Planning ahead is more cost-effective.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       },
       {
         text: "Buy only the cheapest items",
@@ -427,7 +475,10 @@ const easyScenarios: Scenario[] = [
           xp: 25
         },
         feedback: "While saving money is good, consider nutritional value too. Balance quality with cost.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }
@@ -453,7 +504,10 @@ const mediumScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books, meal planning, and student discounts.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Use library books and cook meals",
@@ -467,7 +521,10 @@ const mediumScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health. This is a great way to build financial discipline.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Mix of new and used resources",
@@ -481,7 +538,10 @@ const mediumScenarios: Scenario[] = [
           xp: 45
         },
         feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort. This shows good decision-making skills.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 15
+        }
       }
     ]
   },
@@ -503,7 +563,10 @@ const mediumScenarios: Scenario[] = [
           xp: 25
         },
         feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Use emergency fund and rebuild it",
@@ -517,7 +580,10 @@ const mediumScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Take on debt instead",
@@ -531,7 +597,10 @@ const mediumScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -553,7 +622,10 @@ const mediumScenarios: Scenario[] = [
           xp: 25
         },
         feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Create a diversified portfolio",
@@ -567,7 +639,10 @@ const mediumScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Keep all money in savings",
@@ -581,7 +656,10 @@ const mediumScenarios: Scenario[] = [
           xp: 35
         },
         feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       }
     ]
   },
@@ -604,7 +682,10 @@ const mediumScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Smart choice! Buying a used car with cash avoids interest payments and depreciation costs.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Take out a loan for a new car",
@@ -619,7 +700,10 @@ const mediumScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "New cars depreciate quickly. Consider the total cost including interest and insurance.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Lease a luxury car",
@@ -634,7 +718,10 @@ const mediumScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "Leasing can be expensive in the long run. Consider your long-term financial goals.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -657,7 +744,10 @@ const mediumScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Excellent approach! Having a plan helps you stay on track and pay off loans efficiently.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Pay minimum and invest the rest",
@@ -672,7 +762,10 @@ const mediumScenarios: Scenario[] = [
           xp: 35
         },
         feedback: "While investing is important, high-interest debt should usually be prioritized.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Ignore the loans for now",
@@ -687,7 +780,10 @@ const mediumScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Ignoring student loans can lead to increased debt and damaged credit. Take action early.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }
@@ -713,7 +809,10 @@ const hardScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Maxing out your credit card is risky! High debt can lead to financial stress and damage your credit score. Consider using credit cards responsibly.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Use for emergencies only",
@@ -727,7 +826,10 @@ const hardScenarios: Scenario[] = [
           xp: 40
         },
         feedback: "Smart choice! Using credit cards only for emergencies helps you maintain financial health and build good credit habits.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Use for daily expenses",
@@ -741,7 +843,10 @@ const hardScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "Using credit cards for daily expenses can be convenient, but make sure to pay off the balance in full each month to avoid interest charges.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       }
     ]
   },
@@ -763,7 +868,10 @@ const hardScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Excellent choice! Starting early and saving consistently is key to building a secure retirement fund.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Wait until you're older to start saving",
@@ -777,7 +885,10 @@ const hardScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Waiting to save for retirement means you'll need to save much more later to catch up. Time is your greatest ally in retirement planning.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Rely on social security only",
@@ -791,7 +902,10 @@ const hardScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Social security alone may not be enough for a comfortable retirement. It's important to have additional savings and investments.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -813,7 +927,10 @@ const hardScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Smart approach! Planning deductions throughout the year helps you maximize tax savings and avoid last-minute stress.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Wait until tax season to organize",
@@ -827,7 +944,10 @@ const hardScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "Waiting until tax season can lead to missed deductions and increased stress. It's better to stay organized throughout the year.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Ignore tax planning completely",
@@ -841,7 +961,10 @@ const hardScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Ignoring tax planning can lead to missed opportunities and potential penalties. It's important to stay informed and organized.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -864,7 +987,10 @@ const hardScenarios: Scenario[] = [
           xp: 70
         },
         feedback: "Smart choice! A shorter term and larger down payment save you money in interest.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "30-year adjustable rate with 5% down",
@@ -879,7 +1005,10 @@ const hardScenarios: Scenario[] = [
           xp: 25
         },
         feedback: "Adjustable rates can be risky, and a small down payment means higher monthly payments.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Interest-only loan with minimum down",
@@ -894,7 +1023,10 @@ const hardScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Interest-only loans are very risky and can lead to negative equity. Consider more traditional options.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -917,7 +1049,10 @@ const hardScenarios: Scenario[] = [
           xp: 70
         },
         feedback: "Excellent strategy! Diversification and regular rebalancing help manage risk and optimize returns.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Focus on high-risk, high-reward stocks",
@@ -932,7 +1067,10 @@ const hardScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "High-risk investments can be volatile. Consider a more balanced approach.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Keep everything in cash",
@@ -947,7 +1085,10 @@ const hardScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "While cash is safe, you might miss out on potential growth. Consider a balanced investment strategy.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }
@@ -974,7 +1115,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 50
         },
         feedback: "Great choice! Index funds provide diversification and are a safer way to start investing.",
-        isCorrect: true
+        miniGame: {
+          type: "stock_picker",
+          bonus: 20
+        }
       },
       {
         text: "Invest all money in a single stock",
@@ -989,7 +1133,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "Investing in a single stock is risky. Diversification is key to managing risk.",
-        isCorrect: false
+        miniGame: {
+          type: "stock_picker",
+          bonus: 30
+        }
       },
       {
         text: "Keep money in savings account only",
@@ -1004,7 +1151,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "While safe, you might miss out on potential growth. Consider a balanced investment strategy.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       }
     ]
   },
@@ -1027,7 +1177,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Smart decision! Time in the market is better than timing the market.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Sell everything and wait",
@@ -1042,7 +1195,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "Selling during volatility can lock in losses. Stay focused on your long-term goals.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Double down on investments",
@@ -1057,7 +1213,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "While tempting, increasing risk during volatility can be dangerous.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -1080,7 +1239,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 70
         },
         feedback: "Excellent! Regular rebalancing helps maintain your desired risk level.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Let winners run",
@@ -1095,7 +1257,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "While tempting, letting winners run can lead to an unbalanced portfolio.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Sell everything and start fresh",
@@ -1110,7 +1275,10 @@ const marketMasterScenarios: Scenario[] = [
           xp: 15
         },
         feedback: "Starting fresh can be costly. Regular rebalancing is more effective.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }
@@ -1137,7 +1305,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 50
         },
         feedback: "Smart choice! An emergency fund provides financial security.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Treat yourself to something nice",
@@ -1152,7 +1323,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "While fun, prioritizing savings helps build long-term security.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       },
       {
         text: "Invest in stocks",
@@ -1167,7 +1341,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "While investing is good, an emergency fund should come first.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -1190,7 +1367,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 60
         },
         feedback: "Perfect! Starting early and being consistent is key to retirement success.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Wait until you're older",
@@ -1205,7 +1385,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "The earlier you start, the more time your money has to grow.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Save everything for retirement",
@@ -1220,7 +1403,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "While saving is important, balance is key to financial well-being.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },
@@ -1243,7 +1429,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 70
         },
         feedback: "Excellent! Tax-advantaged accounts help your money grow faster.",
-        isCorrect: true
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 25
+        }
       },
       {
         text: "Keep everything in regular savings",
@@ -1258,7 +1447,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 20
         },
         feedback: "You're missing out on tax benefits. Consider tax-advantaged accounts.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Invest only in stocks",
@@ -1273,7 +1465,10 @@ const savingsQuestScenarios: Scenario[] = [
           xp: 30
         },
         feedback: "While stocks can be good, tax-advantaged accounts offer better long-term benefits.",
-        isCorrect: false
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }
@@ -1290,11 +1485,12 @@ const allScenarios: Scenario[] = [
 
 export const scenarios = allScenarios
 
-export const marketScenarios = [
+export const marketScenarios: Scenario[] = [
   {
     id: "stock_basics",
     title: "Stock Market Basics",
     description: "You're new to investing and want to start with stocks. What's your first move?",
+    difficulty: "easy",
     options: [
       {
         text: "Research index funds",
@@ -1307,7 +1503,7 @@ export const marketScenarios = [
         },
         feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market.",
         miniGame: {
-          type: "stock_picker" as const,
+          type: "stock_picker",
           bonus: 20
         }
       },
@@ -1322,7 +1518,7 @@ export const marketScenarios = [
         },
         feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first.",
         miniGame: {
-          type: "stock_picker" as const,
+          type: "stock_picker",
           bonus: 30
         }
       },
@@ -1337,7 +1533,7 @@ export const marketScenarios = [
         },
         feedback: "Professional advice is valuable, but make sure to understand the basics yourself too.",
         miniGame: {
-          type: "budget_planner" as const,
+          type: "budget_planner",
           bonus: 15
         }
       }
@@ -1347,6 +1543,7 @@ export const marketScenarios = [
     id: "market_volatility",
     title: "Market Volatility",
     description: "The market is experiencing high volatility. How do you react?",
+    difficulty: "medium",
     options: [
       {
         text: "Stay invested",
@@ -1387,6 +1584,7 @@ export const marketScenarios = [
     id: "dividend_investing",
     title: "Dividend Investing",
     description: "You're considering dividend stocks for passive income. What's your approach?",
+    difficulty: "hard",
     options: [
       {
         text: "Research dividend aristocrats",
@@ -1425,11 +1623,12 @@ export const marketScenarios = [
   }
 ]
 
-export const savingScenarios = [
+export const savingScenarios: Scenario[] = [
   {
     id: "emergency_fund",
     title: "Emergency Fund Challenge",
     description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
+    difficulty: "easy",
     options: [
       {
         text: "Use emergency fund and stop saving",
@@ -1443,7 +1642,7 @@ export const savingScenarios = [
         },
         feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
         miniGame: {
-          type: "savings_challenge" as const,
+          type: "savings_challenge",
           bonus: 10
         }
       },
@@ -1459,7 +1658,7 @@ export const savingScenarios = [
         },
         feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
         miniGame: {
-          type: "budget_planner" as const,
+          type: "budget_planner",
           bonus: 25
         }
       },
@@ -1475,7 +1674,7 @@ export const savingScenarios = [
         },
         feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
         miniGame: {
-          type: "savings_challenge" as const,
+          type: "savings_challenge",
           bonus: 5
         }
       }
@@ -1485,6 +1684,7 @@ export const savingScenarios = [
     id: "savings_goal",
     title: "Savings Goal Challenge",
     description: "You've set a goal to save for a major purchase. How will you approach it?",
+    difficulty: "medium",
     options: [
       {
         text: "Cut all non-essential spending",
@@ -1496,7 +1696,11 @@ export const savingScenarios = [
           risk: -5,
           xp: 50
         },
-        feedback: "Cutting non-essential spending is effective, but make sure your cuts are sustainable long-term."
+        feedback: "Cutting non-essential spending is effective, but make sure your cuts are sustainable long-term.",
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Find ways to increase income",
@@ -1508,7 +1712,11 @@ export const savingScenarios = [
           risk: -5,
           xp: 60
         },
-        feedback: "Increasing income while maintaining good spending habits is a great way to reach your savings goals faster."
+        feedback: "Increasing income while maintaining good spending habits is a great way to reach your savings goals faster.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 15
+        }
       },
       {
         text: "Take on a side job",
@@ -1520,7 +1728,11 @@ export const savingScenarios = [
           risk: 10,
           xp: 40
         },
-        feedback: "A side job can boost your savings, but be careful not to burn out. Balance is important."
+        feedback: "A side job can boost your savings, but be careful not to burn out. Balance is important.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       }
     ]
   },
@@ -1528,6 +1740,7 @@ export const savingScenarios = [
     id: "debt_management",
     title: "Debt Management Challenge",
     description: "You have multiple debts to manage. What's your strategy?",
+    difficulty: "hard",
     options: [
       {
         text: "Pay highest interest first",
@@ -1539,7 +1752,11 @@ export const savingScenarios = [
           risk: -10,
           xp: 60
         },
-        feedback: "Paying off high-interest debt first is mathematically optimal and saves you money in the long run."
+        feedback: "Paying off high-interest debt first is mathematically optimal and saves you money in the long run.",
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Pay smallest balance first",
@@ -1551,7 +1768,11 @@ export const savingScenarios = [
           risk: -5,
           xp: 40
         },
-        feedback: "The snowball method can provide psychological wins, but may cost more in interest."
+        feedback: "The snowball method can provide psychological wins, but may cost more in interest.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 15
+        }
       },
       {
         text: "Make minimum payments only",
@@ -1563,7 +1784,11 @@ export const savingScenarios = [
           risk: 20,
           xp: 15
         },
-        feedback: "Minimum payments keep you in debt longer and cost more in interest. Consider paying more when possible."
+        feedback: "Minimum payments keep you in debt longer and cost more in interest. Consider paying more when possible.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   }

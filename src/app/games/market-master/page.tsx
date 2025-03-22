@@ -1,297 +1,244 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useGame } from "@/context/GameContext"
+import React, { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { motion, AnimatePresence } from "framer-motion"
-import { ShareButton } from "@/components/ui/share-button"
-import { marketScenarios } from "@/lib/game-data"
-import { MiniGame } from "@/components/ui/mini-games"
-
-interface ScenarioOption {
-  text: string
-  impact: {
-    portfolio: number
-    cash: number
-    knowledge: number
-    risk: number
-    xp: number
-  }
-  feedback: string
-  miniGame?: {
-    type: "budget_planner" | "stock_picker" | "savings_challenge"
-    bonus: number
-  }
-}
+import { marketScenarios, type Scenario, type Difficulty, type ScenarioOption } from "@/lib/game-data"
+import { useToast, Toast } from "@/components/ui/use-toast"
 
 export default function MarketMasterGame() {
-  const { addXP, level, xp, xpToNextLevel, completeScenario } = useGame()
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
-  const [gameState, setGameState] = useState({
-    portfolio: 10000,
-    cash: 5000,
-    knowledge: 50,
-    risk: 0
+  const [currentScenario, setCurrentScenario] = useState<Scenario | null>(null)
+  const [selectedOption, setSelectedOption] = useState<ScenarioOption | null>(null)
+  const [timeLeft, setTimeLeft] = useState(30)
+  const [playerStats, setPlayerStats] = useState({
+    portfolio: 0,
+    cash: 10000,
+    knowledge: 0,
+    risk: 0,
+    xp: 0,
+    level: 1
   })
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [feedback, setFeedback] = useState("")
-  const [gameComplete, setGameComplete] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [showMiniGame, setShowMiniGame] = useState(false)
-  const [currentOption, setCurrentOption] = useState<ScenarioOption | null>(null)
+  const [difficulty, setDifficulty] = useState<Difficulty>("easy")
+  const [showDifficultySelector, setShowDifficultySelector] = useState(true)
+  const [gameOver, setGameOver] = useState(false)
+  const { toast, toasts } = useToast()
 
   useEffect(() => {
-    try {
-      if (!marketScenarios || marketScenarios.length === 0) {
-        throw new Error("No scenarios available")
-      }
-      setIsLoading(false)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load game")
-      setIsLoading(false)
+    if (!showDifficultySelector && !gameOver) {
+      loadNextScenario()
     }
-  }, [])
+  }, [showDifficultySelector, gameOver])
 
-  const currentScenario = marketScenarios[currentScenarioIndex]
-  if (!currentScenario || !currentScenario.options) return null
+  useEffect(() => {
+    if (!showDifficultySelector && !gameOver && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            handleTimeUp()
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
 
-  const handleChoice = (option: ScenarioOption) => {
-    try {
-      if (option.miniGame) {
-        setCurrentOption(option)
-        setShowMiniGame(true)
-        return
-      }
+      return () => clearInterval(timer)
+    }
+  }, [showDifficultySelector, gameOver, timeLeft])
 
-      applyChoice(option)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+  const handleTimeUp = () => {
+    if (currentScenario) {
+      const randomOption = currentScenario.options[Math.floor(Math.random() * currentScenario.options.length)]
+      handleOptionSelect(randomOption)
     }
   }
 
-  const applyChoice = (option: ScenarioOption, miniGameScore: number = 0) => {
-    setGameState(prev => ({
-      portfolio: Math.max(0, prev.portfolio + option.impact.portfolio),
-      cash: Math.max(0, prev.cash + option.impact.cash),
-      knowledge: Math.max(0, Math.min(100, prev.knowledge + option.impact.knowledge)),
-      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
-    }))
+  const loadNextScenario = () => {
+    const difficultyScenarios = marketScenarios.filter(s => s.difficulty === difficulty)
+    if (difficultyScenarios.length === 0) {
+      setGameOver(true)
+      return
+    }
 
-    const bonusXP = option.miniGame ? Math.floor(miniGameScore * (option.miniGame.bonus / 100)) : 0
-    addXP(option.impact.xp + bonusXP)
-    completeScenario(currentScenario.id)
+    const randomIndex = Math.floor(Math.random() * difficultyScenarios.length)
+    const nextScenario = difficultyScenarios[randomIndex]
+    setCurrentScenario(nextScenario)
+    setSelectedOption(null)
+    setTimeLeft(30)
+  }
 
-    setFeedback(option.feedback)
-    setShowFeedback(true)
+  const handleOptionSelect = (option: ScenarioOption) => {
+    if (selectedOption) return // Prevent multiple selections
 
+    setSelectedOption(option)
+    setTimeLeft(0) // Stop the timer
+
+    // Update player stats
+    setPlayerStats(prev => {
+      const newStats = {
+        ...prev,
+        portfolio: Math.max(0, prev.portfolio + option.impact.portfolio),
+        cash: Math.max(0, prev.cash + option.impact.cash),
+        knowledge: Math.min(100, Math.max(0, prev.knowledge + (option.impact.knowledge ?? 0))),
+        risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
+        xp: prev.xp + option.impact.xp,
+        level: Math.floor(prev.xp / 1000) + 1
+      }
+      return newStats
+    })
+
+    // Show feedback and move to next scenario after a delay
     setTimeout(() => {
-      if (currentScenarioIndex < marketScenarios.length - 1) {
-        setCurrentScenarioIndex(prev => prev + 1)
-        setShowFeedback(false)
-      } else {
-        setGameComplete(true)
-      }
-    }, 3000)
+      loadNextScenario()
+    }, 2000)
   }
 
-  const handleMiniGameComplete = (score: number) => {
-    if (currentOption) {
-      applyChoice(currentOption, score)
-      setShowMiniGame(false)
-      setCurrentOption(null)
+  const getDifficultyColor = (diff: Difficulty) => {
+    switch (diff) {
+      case "easy": return "text-green-500"
+      case "medium": return "text-yellow-500"
+      case "hard": return "text-red-500"
     }
   }
 
-  const handleMiniGameSkip = () => {
-    if (currentOption) {
-      applyChoice(currentOption)
-      setShowMiniGame(false)
-      setCurrentOption(null)
-    }
+  const handleDifficultySelect = (selectedDifficulty: Difficulty) => {
+    setDifficulty(selectedDifficulty)
+    setShowDifficultySelector(false)
+    setPlayerStats({
+      portfolio: 0,
+      cash: 10000,
+      knowledge: 0,
+      risk: 0,
+      xp: 0,
+      level: 1
+    })
   }
 
-  const resetGame = () => {
-    try {
-      setCurrentScenarioIndex(0)
-      setGameState({
-        portfolio: 10000,
-        cash: 5000,
-        knowledge: 50,
-        risk: 0
-      })
-      setShowFeedback(false)
-      setGameComplete(false)
-      setError(null)
-      setShowMiniGame(false)
-      setCurrentOption(null)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reset game")
-    }
-  }
-
-  if (isLoading) {
+  if (showDifficultySelector) {
     return (
       <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p>Loading game...</p>
-          </CardContent>
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Select Difficulty</h1>
+          <p className="text-gray-600 mb-6">Choose your difficulty level to start the game:</p>
+          <div className="grid gap-4">
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("easy")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-green-500">Easy</span>
+                <span className="text-sm text-gray-500">Basic market concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("medium")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500">Medium</span>
+                <span className="text-sm text-gray-500">Intermediate market concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("hard")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-red-500">Hard</span>
+                <span className="text-sm text-gray-500">Advanced market concepts</span>
+              </div>
+            </Button>
+          </div>
         </Card>
       </div>
     )
   }
 
-  if (error) {
+  if (!currentScenario) {
     return (
       <div className="container mx-auto p-4">
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={resetGame}>Try Again</Button>
-          </CardContent>
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
         </Card>
-      </div>
-    )
-  }
-
-  if (showMiniGame && currentOption?.miniGame) {
-    return (
-      <div className="container mx-auto p-4">
-        <MiniGame
-          type={currentOption.miniGame.type}
-          onComplete={(score) => {
-            handleMiniGameComplete(score)
-            setShowMiniGame(false)
-          }}
-          onSkip={() => {
-            handleMiniGameSkip()
-            setShowMiniGame(false)
-          }}
-        />
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Market Master</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">
-            Level {level} • {xp}/{xpToNextLevel} XP
+    <div className="container mx-auto p-4">
+      <Card className="p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Market Master</h1>
+          <div className="flex items-center gap-4">
+            <span className={`font-semibold ${getDifficultyColor(difficulty)}`}>
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDifficultySelector(true)}
+            >
+              Change Difficulty
+            </Button>
           </div>
-          <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
         </div>
-      </div>
 
-      {!gameComplete ? (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScenarioIndex}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">
-                  Scenario {currentScenarioIndex + 1} of {marketScenarios.length}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">
-                      {currentScenario.title}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {currentScenario.description}
-                    </p>
-                  </div>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">{currentScenario.title}</h2>
+          <p className="text-gray-600">{currentScenario.description}</p>
+        </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {currentScenario.options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="h-auto py-4"
-                        onClick={() => handleChoice(option)}
-                      >
-                        {option.text}
-                      </Button>
-                    ))}
-                  </div>
+        <div className="grid gap-4 mb-6">
+          {currentScenario.options.map((option, index) => (
+            <Button
+              key={index}
+              variant={selectedOption === option ? "default" : "outline"}
+              className="w-full text-left justify-start"
+              onClick={() => handleOptionSelect(option)}
+              disabled={selectedOption !== null}
+            >
+              {option.text}
+            </Button>
+          ))}
+        </div>
 
-                  {showFeedback && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-4 bg-primary/10 rounded-lg"
-                    >
-                      {feedback}
-                    </motion.div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Current Stats</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Portfolio Value</p>
-                    <p className="text-2xl font-bold">${gameState.portfolio}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Cash</p>
-                    <p className="text-2xl font-bold">${gameState.cash}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Market Knowledge</p>
-                    <p className="text-2xl font-bold">{gameState.knowledge}%</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Risk Level</p>
-                    <p className="text-2xl font-bold">{gameState.risk}%</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </AnimatePresence>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Game Complete!</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p>Congratulations on completing Market Master!</p>
-              <p>Final Stats:</p>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Portfolio Value: ${gameState.portfolio}</li>
-                <li>Cash: ${gameState.cash}</li>
-                <li>Market Knowledge: {gameState.knowledge}%</li>
-                <li>Risk Level: {gameState.risk}%</li>
-              </ul>
-              <div className="flex gap-4">
-                <Button onClick={resetGame}>Play Again</Button>
-                <ShareButton
-                  title="I completed Market Master!"
-                  text={`I reached level ${level} and grew my portfolio to $${gameState.portfolio}! Can you beat my score?`}
-                />
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold mb-2">Your Stats</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Portfolio</p>
+                <Progress value={(playerStats.portfolio / 50000) * 100} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Cash</p>
+                <Progress value={(playerStats.cash / 50000) * 100} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Knowledge</p>
+                <Progress value={playerStats.knowledge} className="h-2" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Risk</p>
+                <Progress value={playerStats.risk} className="h-2" />
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Progress</h3>
+            <div className="flex items-center gap-4">
+              <Progress value={(playerStats.xp / (playerStats.level * 100)) * 100} className="h-2 flex-1" />
+              <span className="text-sm font-medium">Level {playerStats.level}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+      <Toast toasts={toasts} />
     </div>
   )
 } 
