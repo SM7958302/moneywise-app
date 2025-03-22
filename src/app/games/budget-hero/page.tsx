@@ -84,9 +84,9 @@ export default function BudgetHeroGame() {
         savings: Math.max(0, prev.savings + option.impact.savings),
         debt: Math.max(0, prev.debt + option.impact.debt),
         income: Math.max(0, prev.income + option.impact.income),
-        health: Math.min(100, Math.max(0, prev.health + option.impact.health)),
-        happiness: Math.min(100, Math.max(0, prev.happiness + option.impact.happiness)),
-        discipline: Math.min(100, Math.max(0, prev.discipline + option.impact.discipline)),
+        health: Math.min(100, Math.max(0, prev.health + (option.impact.health ?? 0))),
+        happiness: Math.min(100, Math.max(0, prev.happiness + (option.impact.happiness ?? 0))),
+        discipline: Math.min(100, Math.max(0, prev.discipline + (option.impact.discipline ?? 0))),
         risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
         xp: prev.xp + option.impact.xp,
         level: Math.floor(prev.xp / 1000) + 1
