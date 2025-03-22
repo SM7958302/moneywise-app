@@ -395,7 +395,11 @@ export const marketScenarios = [
           risk: 20,
           xp: 50
         },
-        feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market."
+        feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market.",
+        miniGame: {
+          type: "stock_picker",
+          bonus: 20
+        }
       },
       {
         text: "Buy individual stocks",
@@ -406,7 +410,11 @@ export const marketScenarios = [
           risk: 60,
           xp: 30
         },
-        feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first."
+        feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first.",
+        miniGame: {
+          type: "stock_picker",
+          bonus: 30
+        }
       },
       {
         text: "Consult a financial advisor",
@@ -417,7 +425,11 @@ export const marketScenarios = [
           risk: 10,
           xp: 40
         },
-        feedback: "Professional advice is valuable, but make sure to understand the basics yourself too."
+        feedback: "Professional advice is valuable, but make sure to understand the basics yourself too.",
+        miniGame: {
+          type: "budget_planner",
+          bonus: 15
+        }
       }
     ]
   },
@@ -519,7 +531,11 @@ export const savingScenarios = [
           risk: 20,
           xp: 25
         },
-        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses."
+        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 10
+        }
       },
       {
         text: "Use emergency fund and increase savings",
@@ -531,7 +547,11 @@ export const savingScenarios = [
           risk: -10,
           xp: 60
         },
-        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline."
+        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
+        miniGame: {
+          type: "budget_planner",
+          bonus: 25
+        }
       },
       {
         text: "Take on debt instead of using emergency fund",
@@ -543,7 +563,11 @@ export const savingScenarios = [
           risk: 25,
           xp: 15
         },
-        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations."
+        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
+        miniGame: {
+          type: "savings_challenge",
+          bonus: 5
+        }
       }
     ]
   },

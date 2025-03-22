@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
 import { savingScenarios } from "@/lib/game-data"
+import { MiniGame } from "@/components/ui/mini-games"
 
 interface ScenarioOption {
   text: string
@@ -20,6 +21,10 @@ interface ScenarioOption {
     xp: number
   }
   feedback: string
+  miniGame?: {
+    type: "budget_planner" | "stock_picker" | "savings_challenge"
+    bonus: number
+  }
 }
 
 export default function SavingQuestGame() {
@@ -37,6 +42,8 @@ export default function SavingQuestGame() {
   const [gameComplete, setGameComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showMiniGame, setShowMiniGame] = useState(false)
+  const [currentOption, setCurrentOption] = useState<ScenarioOption | null>(null)
 
   useEffect(() => {
     try {
@@ -55,30 +62,57 @@ export default function SavingQuestGame() {
 
   const handleChoice = (option: ScenarioOption) => {
     try {
-      setGameState(prev => ({
-        savings: Math.max(0, prev.savings + option.impact.savings),
-        debt: Math.max(0, prev.debt + option.impact.debt),
-        income: Math.max(0, prev.income + option.impact.income),
-        discipline: Math.max(0, Math.min(100, prev.discipline + option.impact.discipline)),
-        risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
-      }))
+      if (option.miniGame) {
+        setCurrentOption(option)
+        setShowMiniGame(true)
+        return
+      }
 
-      addXP(option.impact.xp)
-      completeScenario(currentScenario.id)
-
-      setFeedback(option.feedback)
-      setShowFeedback(true)
-
-      setTimeout(() => {
-        if (currentScenarioIndex < savingScenarios.length - 1) {
-          setCurrentScenarioIndex(prev => prev + 1)
-          setShowFeedback(false)
-        } else {
-          setGameComplete(true)
-        }
-      }, 3000)
+      applyChoice(option)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
+    }
+  }
+
+  const applyChoice = (option: ScenarioOption, miniGameScore: number = 0) => {
+    setGameState(prev => ({
+      savings: Math.max(0, prev.savings + option.impact.savings),
+      debt: Math.max(0, prev.debt + option.impact.debt),
+      income: Math.max(0, prev.income + option.impact.income),
+      discipline: Math.max(0, Math.min(100, prev.discipline + option.impact.discipline)),
+      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
+    }))
+
+    const bonusXP = option.miniGame ? Math.floor(miniGameScore * (option.miniGame.bonus / 100)) : 0
+    addXP(option.impact.xp + bonusXP)
+    completeScenario(currentScenario.id)
+
+    setFeedback(option.feedback)
+    setShowFeedback(true)
+
+    setTimeout(() => {
+      if (currentScenarioIndex < savingScenarios.length - 1) {
+        setCurrentScenarioIndex(prev => prev + 1)
+        setShowFeedback(false)
+      } else {
+        setGameComplete(true)
+      }
+    }, 3000)
+  }
+
+  const handleMiniGameComplete = (score: number) => {
+    if (currentOption) {
+      applyChoice(currentOption, score)
+      setShowMiniGame(false)
+      setCurrentOption(null)
+    }
+  }
+
+  const handleMiniGameSkip = () => {
+    if (currentOption) {
+      applyChoice(currentOption)
+      setShowMiniGame(false)
+      setCurrentOption(null)
     }
   }
 
@@ -95,6 +129,8 @@ export default function SavingQuestGame() {
       setShowFeedback(false)
       setGameComplete(false)
       setError(null)
+      setShowMiniGame(false)
+      setCurrentOption(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to reset game")
     }
@@ -121,6 +157,18 @@ export default function SavingQuestGame() {
             <Button onClick={resetGame}>Try Again</Button>
           </CardContent>
         </Card>
+      </div>
+    )
+  }
+
+  if (showMiniGame && currentOption?.miniGame) {
+    return (
+      <div className="container mx-auto p-4">
+        <MiniGame
+          type={currentOption.miniGame.type}
+          onComplete={handleMiniGameComplete}
+          onSkip={handleMiniGameSkip}
+        />
       </div>
     )
   }
