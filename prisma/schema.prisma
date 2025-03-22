@@ -6,51 +6,80 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = []
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("POSTGRES_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
-  emailVerified DateTime?
+  email         String?        @unique
+  emailVerified DateTime?      @map("email_verified")
   image         String?
   password      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  points        Int       @default(0)
-  streak        Int       @default(0)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  points        Int           @default(0)
+  streak        Int           @default(0)
   progress      Progress[]
-  accounts      Account[]
-  sessions      Session[]
   gameProgress  GameProgress[]
   chatHistory   ChatMessage[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
 }
 
 model Progress {
   id        String   @id @default(cuid())
-  userId    String
-  moduleId  String
-  lessonId  String
+  userId    String   @map("user_id")
+  moduleId  String   @map("module_id")
+  lessonId  String   @map("lesson_id")
   completed Boolean  @default(false)
   score     Int      @default(0)
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, moduleId, lessonId])
+  @@map("progress")
+}
+
+model GameProgress {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  gameId     String   @map("game_id")
+  progress   Int      @default(0)
+  score      Int      @default(0)
+  completed  Boolean  @default(false)
+  lastPlayed DateTime @default(now()) @map("last_played")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameId])
+  @@map("game_progress")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  content   String   @db.Text
+  role      String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("chat_messages")
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String
+  userId            String  @map("user_id")
   type              String
   provider          String
-  providerAccountId String
+  providerAccountId String  @map("provider_account_id")
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
@@ -58,18 +87,20 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -78,29 +109,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model GameProgress {
-  id         String   @id @default(cuid())
-  userId     String
-  gameId     String
-  progress   Int      @default(0)
-  score      Int      @default(0)
-  completed  Boolean  @default(false)
-  lastPlayed DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, gameId])
-}
-
-model ChatMessage {
-  id        String   @id @default(cuid())
-  userId    String
-  content   String   @db.Text
-  role      String   // 'user' or 'assistant'
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, createdAt])
 }
