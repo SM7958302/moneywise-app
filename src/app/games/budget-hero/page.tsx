@@ -81,9 +81,9 @@ export default function BudgetHeroGame() {
     setPlayerStats(prev => {
       const newStats = {
         ...prev,
-        savings: Math.max(0, prev.savings + option.impact.savings),
-        debt: Math.max(0, prev.debt + option.impact.debt),
-        income: Math.max(0, prev.income + option.impact.income),
+        savings: Math.max(0, prev.savings + (option.impact.savings ?? 0)),
+        debt: Math.max(0, prev.debt + (option.impact.debt ?? 0)),
+        income: Math.max(0, prev.income + (option.impact.income ?? 0)),
         health: Math.min(100, Math.max(0, prev.health + (option.impact.health ?? 0))),
         happiness: Math.min(100, Math.max(0, prev.happiness + (option.impact.happiness ?? 0))),
         discipline: Math.min(100, Math.max(0, prev.discipline + (option.impact.discipline ?? 0))),
