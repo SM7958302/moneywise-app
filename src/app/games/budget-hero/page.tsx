@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useGame } from "@/context/GameContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -37,52 +37,101 @@ export default function BudgetHeroGame() {
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedback, setFeedback] = useState("")
   const [gameComplete, setGameComplete] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      // Validate scenarios data
+      if (!scenarios || scenarios.length === 0) {
+        throw new Error("No scenarios available")
+      }
+      setIsLoading(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load game")
+      setIsLoading(false)
+    }
+  }, [])
 
   const currentScenario = scenarios[currentScenarioIndex]
   if (!currentScenario || !currentScenario.options) return null
 
   const handleChoice = (option: ScenarioOption) => {
-    // Update game state based on choice impact
-    setGameState(prev => ({
-      savings: Math.max(0, prev.savings + option.impact.savings),
-      debt: Math.max(0, prev.debt + option.impact.debt),
-      income: Math.max(0, prev.income + option.impact.income),
-      health: Math.max(0, Math.min(100, prev.health + option.impact.health)),
-      happiness: Math.max(0, Math.min(100, prev.happiness + option.impact.happiness)),
-      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
-    }))
+    try {
+      // Update game state based on choice impact
+      setGameState(prev => ({
+        savings: Math.max(0, prev.savings + option.impact.savings),
+        debt: Math.max(0, prev.debt + option.impact.debt),
+        income: Math.max(0, prev.income + option.impact.income),
+        health: Math.max(0, Math.min(100, prev.health + option.impact.health)),
+        happiness: Math.max(0, Math.min(100, prev.happiness + option.impact.happiness)),
+        risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
+      }))
 
-    // Add XP and complete scenario
-    addXP(option.impact.xp)
-    completeScenario(currentScenario.id)
+      // Add XP and complete scenario
+      addXP(option.impact.xp)
+      completeScenario(currentScenario.id)
 
-    // Show feedback
-    setFeedback(option.feedback)
-    setShowFeedback(true)
+      // Show feedback
+      setFeedback(option.feedback)
+      setShowFeedback(true)
 
-    // Move to next scenario after delay
-    setTimeout(() => {
-      if (currentScenarioIndex < scenarios.length - 1) {
-        setCurrentScenarioIndex(prev => prev + 1)
-        setShowFeedback(false)
-      } else {
-        setGameComplete(true)
-      }
-    }, 3000)
+      // Move to next scenario after delay
+      setTimeout(() => {
+        if (currentScenarioIndex < scenarios.length - 1) {
+          setCurrentScenarioIndex(prev => prev + 1)
+          setShowFeedback(false)
+        } else {
+          setGameComplete(true)
+        }
+      }, 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred")
+    }
   }
 
   const resetGame = () => {
-    setCurrentScenarioIndex(0)
-    setGameState({
-      savings: 1000,
-      debt: 0,
-      income: 3000,
-      health: 100,
-      happiness: 100,
-      risk: 0
-    })
-    setShowFeedback(false)
-    setGameComplete(false)
+    try {
+      setCurrentScenarioIndex(0)
+      setGameState({
+        savings: 1000,
+        debt: 0,
+        income: 3000,
+        health: 100,
+        happiness: 100,
+        risk: 0
+      })
+      setShowFeedback(false)
+      setGameComplete(false)
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reset game")
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p>Loading game...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={resetGame}>Try Again</Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

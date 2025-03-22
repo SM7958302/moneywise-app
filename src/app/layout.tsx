@@ -4,13 +4,13 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GameProvider } from "@/context/GameContext";
 import { FriendsProvider } from "@/context/FriendsContext";
-import { ForumProvider } from "@/contexts/ForumContext";
+import { ForumProvider } from "@/context/ForumContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MoneyWise - Financial Literacy App",
-  description: "Learn financial literacy through interactive games and tools",
+  description: "Learn financial literacy through interactive games and lessons",
 };
 
 export default function RootLayout({
@@ -29,7 +29,9 @@ export default function RootLayout({
         >
           <GameProvider>
             <FriendsProvider>
-              <ForumProvider>{children}</ForumProvider>
+              <ForumProvider>
+                {children}
+              </ForumProvider>
             </FriendsProvider>
           </GameProvider>
         </ThemeProvider>
