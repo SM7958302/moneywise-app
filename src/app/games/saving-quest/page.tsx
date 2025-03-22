@@ -10,19 +10,19 @@ import { ShareButton } from "@/components/ui/share-button"
 import { savingScenarios } from "@/lib/game-data"
 import { MiniGame } from "@/components/ui/mini-games"
 
-interface ScenarioOption {
+type ScenarioOption = {
   text: string
   impact: {
-    savings: number
-    debt: number
-    income: number
-    discipline: number
+    savings?: number
+    debt?: number
+    income?: number
+    discipline?: number
     risk: number
     xp: number
   }
   feedback: string
   miniGame?: {
-    type: "budget_planner" | "stock_picker" | "savings_challenge"
+    type: "savings_challenge" | "budget_planner" | "stock_picker"
     bonus: number
   }
 }
@@ -31,11 +31,13 @@ export default function SavingQuestGame() {
   const { addXP, level, xp, xpToNextLevel, completeScenario } = useGame()
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
   const [gameState, setGameState] = useState({
-    savings: 5000,
-    debt: 2000,
-    income: 3000,
-    discipline: 50,
-    risk: 0
+    savings: 0,
+    debt: 0,
+    income: 0,
+    discipline: 0,
+    risk: 0,
+    xp: 0,
+    level: 1
   })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedback, setFeedback] = useState("")
@@ -61,35 +63,23 @@ export default function SavingQuestGame() {
   if (!currentScenario || !currentScenario.options) return null
 
   const handleChoice = (option: ScenarioOption) => {
-    try {
-      if (option.miniGame) {
-        setCurrentOption(option)
-        setShowMiniGame(true)
-        return
-      }
+    if (currentOption) return // Prevent multiple selections
 
-      applyChoice(option)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
-    }
-  }
+    setCurrentOption(option)
+    setShowFeedback(false)
 
-  const applyChoice = (option: ScenarioOption, miniGameScore: number = 0) => {
+    // Update player stats
     setGameState(prev => ({
-      savings: Math.max(0, prev.savings + option.impact.savings),
-      debt: Math.max(0, prev.debt + option.impact.debt),
-      income: Math.max(0, prev.income + option.impact.income),
-      discipline: Math.max(0, Math.min(100, prev.discipline + option.impact.discipline)),
-      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
+      savings: Math.max(0, prev.savings + (option.impact.savings ?? 0)),
+      debt: Math.max(0, prev.debt + (option.impact.debt ?? 0)),
+      income: Math.max(0, prev.income + (option.impact.income ?? 0)),
+      discipline: Math.min(100, Math.max(0, prev.discipline + (option.impact.discipline ?? 0))),
+      risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
+      xp: prev.xp + option.impact.xp,
+      level: Math.floor(prev.xp / 1000) + 1
     }))
 
-    const bonusXP = option.miniGame ? Math.floor(miniGameScore * (option.miniGame.bonus / 100)) : 0
-    addXP(option.impact.xp + bonusXP)
-    completeScenario(currentScenario.id)
-
-    setFeedback(option.feedback)
-    setShowFeedback(true)
-
+    // Show feedback and move to next scenario after a delay
     setTimeout(() => {
       if (currentScenarioIndex < savingScenarios.length - 1) {
         setCurrentScenarioIndex(prev => prev + 1)
@@ -97,12 +87,12 @@ export default function SavingQuestGame() {
       } else {
         setGameComplete(true)
       }
-    }, 3000)
+    }, 2000)
   }
 
   const handleMiniGameComplete = (score: number) => {
     if (currentOption) {
-      applyChoice(currentOption, score)
+      handleChoice(currentOption)
       setShowMiniGame(false)
       setCurrentOption(null)
     }
@@ -110,7 +100,7 @@ export default function SavingQuestGame() {
 
   const handleMiniGameSkip = () => {
     if (currentOption) {
-      applyChoice(currentOption)
+      handleChoice(currentOption)
       setShowMiniGame(false)
       setCurrentOption(null)
     }
@@ -120,11 +110,13 @@ export default function SavingQuestGame() {
     try {
       setCurrentScenarioIndex(0)
       setGameState({
-        savings: 5000,
-        debt: 2000,
-        income: 3000,
-        discipline: 50,
-        risk: 0
+        savings: 0,
+        debt: 0,
+        income: 0,
+        discipline: 0,
+        risk: 0,
+        xp: 0,
+        level: 1
       })
       setShowFeedback(false)
       setGameComplete(false)
