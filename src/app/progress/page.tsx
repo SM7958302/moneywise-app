@@ -4,6 +4,7 @@ import { Header } from "@/components/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { useGame } from "@/context/GameContext"
+import { cn } from "@/lib/utils"
 
 const achievements = [
   {
@@ -37,62 +38,62 @@ export default function ProgressPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background text-foreground">
       <Header />
       <div className="container py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold">Your Progress</h1>
+          <h1 className="text-4xl font-bold text-foreground">Your Progress</h1>
           <p className="text-muted-foreground">Track your financial learning journey</p>
         </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card>
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-foreground">
                 Games Completed
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.gamesCompleted} / {stats.totalGames}</div>
+              <div className="text-2xl font-bold text-foreground">{stats.gamesCompleted} / {stats.totalGames}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-foreground">
                 Total XP
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalXP}</div>
+              <div className="text-2xl font-bold text-foreground">{stats.totalXP}</div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-foreground">
                 Completion
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Math.round(stats.completionPercentage)}%</div>
+              <div className="text-2xl font-bold text-foreground">{Math.round(stats.completionPercentage)}%</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Achievements */}
-        <h2 className="text-2xl font-bold mb-4">Game Achievements</h2>
+        <h2 className="text-2xl font-bold mb-4 text-foreground">Game Achievements</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {achievements.map((achievement) => {
             const isCompleted = progress.completedScenarios.includes(achievement.id);
             return (
-              <Card key={achievement.id} className={isCompleted ? "border-primary" : ""}>
+              <Card key={achievement.id} className={cn("bg-card border-border", isCompleted ? "border-primary" : "")}>
                 <CardHeader>
-                  <CardTitle className="text-lg">{achievement.name}</CardTitle>
-                  <CardDescription>{achievement.description}</CardDescription>
+                  <CardTitle className="text-lg text-foreground">{achievement.name}</CardTitle>
+                  <CardDescription className="text-muted-foreground">{achievement.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    <Progress value={isCompleted ? 100 : 0} className="h-2" />
+                    <Progress value={isCompleted ? 100 : 0} className="h-2 bg-secondary" />
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">
                         {isCompleted ? "Completed" : "Not started"}

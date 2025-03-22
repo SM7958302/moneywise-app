@@ -16,38 +16,38 @@ const config: Config = {
     },
     extend: {
       colors: {
-        border: "hsl(220 13% 91%)",
-        input: "hsl(220 13% 91%)",
+        border: "hsl(217 19% 27%)",
+        input: "hsl(217 19% 27%)",
         ring: "hsl(224 71.4% 45%)",
-        background: "hsl(0 0% 100%)",
-        foreground: "hsl(224 71.4% 4%)",
+        background: "hsl(224 71.4% 4%)",
+        foreground: "hsl(210 20% 98%)",
         primary: {
           DEFAULT: "hsl(224 71.4% 45%)",
-          foreground: "hsl(0 0% 100%)",
+          foreground: "hsl(210 20% 98%)",
         },
         secondary: {
-          DEFAULT: "hsl(220 14.3% 95.9%)",
-          foreground: "hsl(220 8.9% 46.1%)",
+          DEFAULT: "hsl(217 19% 27%)",
+          foreground: "hsl(215 20.2% 65.1%)",
         },
         destructive: {
           DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(0 0% 100%)",
+          foreground: "hsl(210 20% 98%)",
         },
         muted: {
-          DEFAULT: "hsl(220 14.3% 95.9%)",
-          foreground: "hsl(220 8.9% 46.1%)",
+          DEFAULT: "hsl(217 19% 27%)",
+          foreground: "hsl(215 20.2% 65.1%)",
         },
         accent: {
-          DEFAULT: "hsl(220 14.3% 95.9%)",
-          foreground: "hsl(220 8.9% 46.1%)",
+          DEFAULT: "hsl(217 19% 27%)",
+          foreground: "hsl(215 20.2% 65.1%)",
         },
         popover: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(224 71.4% 4%)",
+          DEFAULT: "hsl(224 71.4% 4%)",
+          foreground: "hsl(210 20% 98%)",
         },
         card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(224 71.4% 4%)",
+          DEFAULT: "hsl(224 71.4% 4%)",
+          foreground: "hsl(210 20% 98%)",
         },
       },
       borderRadius: {
