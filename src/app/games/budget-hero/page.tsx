@@ -20,9 +20,11 @@ export default function BudgetHeroGame() {
   const [showTip, setShowTip] = useState(true)
   const [monthsCompleted, setMonthsCompleted] = useState(0)
   const [isGameComplete, setIsGameComplete] = useState(false)
+  const [consecutiveSavingMonths, setConsecutiveSavingMonths] = useState(0)
 
   const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
   const remaining = income - totalExpenses
+  const savingsRate = (remaining / income) * 100
 
   const handleExpenseChange = (category: string, value: string) => {
     const numValue = parseInt(value) || 0
@@ -37,25 +39,39 @@ export default function BudgetHeroGame() {
 
     const newMonthsCompleted = monthsCompleted + 1
     setMonthsCompleted(newMonthsCompleted)
+
+    // Track consecutive months of good savings
+    if (savingsRate >= 20) {
+      setConsecutiveSavingMonths(prev => prev + 1)
+    } else {
+      setConsecutiveSavingMonths(0)
+    }
     
     // Check if goals are met
     const goalsMet = currentScenario.goals.every(goal => {
       if (goal.id === "emergency" || goal.id === "savings") {
         return remaining >= goal.amount
       }
-      return expenses[goal.id] >= goal.amount
+      return expenses[goal.id] <= goal.amount // Changed from >= to <= since we want to stay within budget
     })
 
-    if (goalsMet && !progress.completedScenarios.includes(currentScenario.id)) {
-      // Award achievements based on performance
-      if (remaining >= income * 0.2) {
-        unlockAchievement("saving_star")
-      }
-      
-      if (newMonthsCompleted >= 3) {
-        unlockAchievement("expense_master")
-      }
+    // Check for achievements
+    if (consecutiveSavingMonths >= 3 && !progress.achievements.includes("saving_star")) {
+      unlockAchievement("saving_star")
+      addXP(100) // XP for saving_star achievement
+    }
 
+    if (newMonthsCompleted >= 3 && !progress.achievements.includes("expense_master")) {
+      unlockAchievement("expense_master")
+      addXP(75) // XP for expense_master achievement
+    }
+
+    if (!progress.achievements.includes("first_budget")) {
+      unlockAchievement("first_budget")
+      addXP(50) // XP for first_budget achievement
+    }
+
+    if (goalsMet && !progress.completedScenarios.includes(currentScenario.id)) {
       // Award XP for completing the scenario
       addXP(200)
       completeScenario(currentScenario.id)
@@ -71,6 +87,7 @@ export default function BudgetHeroGame() {
           )
         )
         setMonthsCompleted(0)
+        setConsecutiveSavingMonths(0)
       } else {
         setIsGameComplete(true)
       }
@@ -166,6 +183,9 @@ export default function BudgetHeroGame() {
                 <p>Total Expenses: ${totalExpenses}</p>
                 <p className={remaining >= 0 ? "text-green-600" : "text-red-600"}>
                   {remaining >= 0 ? "Savings" : "Deficit"}: ${Math.abs(remaining)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Savings Rate: {Math.round(savingsRate)}%
                 </p>
               </div>
             </CardContent>
