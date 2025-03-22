@@ -251,15 +251,12 @@ export const scenarios = [
           savings: 0,
           debt: 5000,
           income: 0,
-          discipline: -30,
+          health: -20,
+          happiness: 10,
           risk: 40,
           xp: 10
         },
-        feedback: "Maxing out your credit card can lead to high interest charges and damage your credit score. Always keep your credit utilization low.",
-        miniGame: {
-          type: "budget_planner" as const,
-          bonus: 5
-        }
+        feedback: "Maxing out your credit card is risky! High debt can lead to financial stress and damage your credit score. Consider using credit cards responsibly."
       },
       {
         text: "Use for emergencies only",
@@ -267,15 +264,12 @@ export const scenarios = [
           savings: 0,
           debt: 0,
           income: 0,
-          discipline: 20,
+          health: 20,
+          happiness: 10,
           risk: -10,
           xp: 40
         },
-        feedback: "Smart approach! Using credit cards only for emergencies helps you maintain good financial health.",
-        miniGame: {
-          type: "budget_planner" as const,
-          bonus: 20
-        }
+        feedback: "Smart choice! Using credit cards only for emergencies helps you maintain financial health and build good credit habits."
       },
       {
         text: "Use for daily expenses",
@@ -283,15 +277,12 @@ export const scenarios = [
           savings: 0,
           debt: 2000,
           income: 0,
-          discipline: -10,
+          health: -10,
+          happiness: 5,
           risk: 20,
           xp: 20
         },
-        feedback: "While using credit cards for daily expenses can be convenient, make sure to pay off the balance in full each month.",
-        miniGame: {
-          type: "budget_planner" as const,
-          bonus: 10
-        }
+        feedback: "Using credit cards for daily expenses can be convenient, but make sure to pay off the balance in full each month to avoid interest charges."
       }
     ]
   },

@@ -8,7 +8,6 @@ import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
 import { scenarios, levels } from "@/lib/game-data"
-import { MiniGame } from "@/components/ui/mini-games"
 
 interface ScenarioOption {
   text: string
@@ -23,10 +22,6 @@ interface ScenarioOption {
     xp: number
   }
   feedback: string
-  miniGame?: {
-    type: "budget_planner" | "stock_picker" | "savings_challenge"
-    bonus: number
-  }
 }
 
 export default function BudgetHeroGame() {
@@ -45,9 +40,6 @@ export default function BudgetHeroGame() {
   const [gameComplete, setGameComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showMiniGame, setShowMiniGame] = useState(false)
-  const [currentOption, setCurrentOption] = useState<ScenarioOption | null>(null)
-  const [currentFeedback, setCurrentFeedback] = useState("")
   const [prevXP, setPrevXP] = useState(0)
   const [currentLevel, setCurrentLevel] = useState(0)
 
@@ -69,9 +61,7 @@ export default function BudgetHeroGame() {
 
   const handleChoice = (option: ScenarioOption) => {
     setShowFeedback(true)
-    setCurrentFeedback(option.feedback)
-    setCurrentOption(option)
-    setShowMiniGame(!!option.miniGame)
+    setFeedback(option.feedback)
 
     // Update game state with the impact
     setGameState(prev => ({
