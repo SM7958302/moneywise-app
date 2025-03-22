@@ -10,6 +10,7 @@ import { AchievementsPanel } from "@/components/game/AchievementsPanel"
 
 export default function BudgetHeroGame() {
   const { addXP, unlockAchievement, completeScenario, progress } = useGame()
+  const [gameStarted, setGameStarted] = useState(false)
   const [currentScenario, setCurrentScenario] = useState(scenarios[0])
   const [income, setIncome] = useState(currentScenario.monthlyIncome)
   const [expenses, setExpenses] = useState<Record<string, number>>(
@@ -25,6 +26,14 @@ export default function BudgetHeroGame() {
   const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
   const remaining = income - totalExpenses
   const savingsRate = (remaining / income) * 100
+
+  const handleStartGame = () => {
+    setGameStarted(true)
+    if (!progress.achievements.includes("first_budget")) {
+      unlockAchievement("first_budget")
+      addXP(50) // XP for first_budget achievement
+    }
+  }
 
   const handleExpenseChange = (category: string, value: string) => {
     const numValue = parseInt(value) || 0
@@ -92,6 +101,80 @@ export default function BudgetHeroGame() {
         setIsGameComplete(true)
       }
     }
+  }
+
+  if (!gameStarted) {
+    return (
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
+            <h1 className="text-5xl font-bold mb-4">Budget Hero</h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Master your budgeting skills and become a financial hero!
+            </p>
+            
+            <Card className="mb-8">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">How to Play</h2>
+                <ul className="text-left space-y-4 mb-6">
+                  <li>🎯 Complete financial scenarios</li>
+                  <li>💰 Manage your income and expenses</li>
+                  <li>🏆 Earn achievements and XP</li>
+                  <li>📈 Build good saving habits</li>
+                </ul>
+                <p className="text-muted-foreground mb-6">
+                  Ready to start your journey to financial mastery?
+                </p>
+                <Button 
+                  size="lg" 
+                  onClick={handleStartGame}
+                  className="w-full md:w-auto"
+                >
+                  Start Game
+                </Button>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Learn</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Master budgeting concepts through interactive scenarios
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Practice</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Apply your knowledge in real-world situations
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Achieve</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Earn rewards and track your progress
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
   }
 
   return (
