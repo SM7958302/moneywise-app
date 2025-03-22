@@ -1,7 +1,11 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { motion } from "framer-motion"
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
 
 const features = [
   {
@@ -26,49 +30,44 @@ const features = [
   }
 ]
 
-export default function Home() {
-  return (
-    <main className="min-h-screen bg-background">
-      <Header />
-      <section className="container px-4 py-16 md:py-24">
-        <div className="flex flex-col items-center text-center space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter">
-            Master Your Money, <br />
-            Shape Your Future
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-[600px]">
-            Learn essential financial skills through interactive games and AI-guided lessons.
-            Start your journey to financial independence today.
-          </p>
-          <div className="flex gap-4 mt-8">
-            <Button size="lg" asChild>
-              <Link href="/learn">Start Learning</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/games">Play Games</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+export default function HomePage() {
+  const [greeting, setGreeting] = useState("")
 
-      <section className="container px-4 py-16 md:py-24">
-        <h2 className="text-3xl font-bold text-center mb-12">Why Choose MoneyWise?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature) => (
-            <Card key={feature.title} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle>{feature.title}</CardTitle>
-                <CardDescription>{feature.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button variant="ghost" className="w-full" asChild>
-                  <Link href={feature.href}>Learn More →</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+  useEffect(() => {
+    fetch("/welcome")
+      .then(res => res.json())
+      .then(data => setGreeting(data))
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center space-y-8"
+      >
+        <h1 className="text-4xl md:text-6xl font-bold text-foreground">
+          MoneyWise
+        </h1>
+        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+          {greeting || "Welcome to MoneyWise! Let's learn about finance together!"}
+        </p>
+        <div className="flex flex-col md:flex-row gap-4 justify-center">
+          <Link
+            href="/games"
+            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Start Playing
+          </Link>
+          <Link
+            href="/learn"
+            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-secondary-foreground bg-secondary rounded-lg hover:bg-secondary/90 transition-colors"
+          >
+            Start Learning
+          </Link>
         </div>
-      </section>
-    </main>
+      </motion.div>
+    </div>
   )
 }
