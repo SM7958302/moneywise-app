@@ -9,7 +9,7 @@ const navigation = [
   { name: "Home", href: "/" },
   { name: "Games", href: "/games" },
   { name: "Progress", href: "/progress" },
-  { name: "Tools", href: "/tools/currency-converter" },
+  { name: "Tools", href: "/tools" },
 ]
 
 export function Navigation() {

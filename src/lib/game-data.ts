@@ -147,11 +147,38 @@ export const learningModules = [
   }
 ]
 
-export const scenarios = [
+export type Difficulty = "easy" | "medium" | "hard"
+
+export interface Scenario {
+  id: string
+  title: string
+  description: string
+  difficulty: Difficulty
+  options: ScenarioOption[]
+}
+
+export interface ScenarioOption {
+  text: string
+  impact: {
+    savings: number
+    debt: number
+    income: number
+    health?: number
+    happiness?: number
+    discipline?: number
+    risk: number
+    xp: number
+  }
+  feedback: string
+  isCorrect: boolean
+}
+
+export const scenarios: Scenario[] = [
   {
     id: "first_job",
     title: "First Job Challenge",
     description: "You just got your first job! Learn to manage your first paycheck",
+    difficulty: "easy",
     options: [
       {
         text: "Spend most of your paycheck on wants and save little",
@@ -164,7 +191,8 @@ export const scenarios = [
           risk: 25,
           xp: 15
         },
-        feedback: "While it's tempting to spend on wants, saving less now means less financial security later. Consider setting aside some money for emergencies."
+        feedback: "While it's tempting to spend on wants, saving less now means less financial security later. Consider setting aside some money for emergencies.",
+        isCorrect: false
       },
       {
         text: "Follow the 50/30/20 rule strictly",
@@ -177,7 +205,8 @@ export const scenarios = [
           risk: -15,
           xp: 60
         },
-        feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings. This is a sustainable approach to money management."
+        feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings. This is a sustainable approach to money management.",
+        isCorrect: true
       },
       {
         text: "Save everything and spend nothing",
@@ -190,7 +219,8 @@ export const scenarios = [
           risk: -10,
           xp: 35
         },
-        feedback: "While saving is important, completely avoiding spending can impact your well-being. Remember to find a balance between saving and enjoying life."
+        feedback: "While saving is important, completely avoiding spending can impact your well-being. Remember to find a balance between saving and enjoying life.",
+        isCorrect: false
       }
     ]
   },
@@ -198,6 +228,7 @@ export const scenarios = [
     id: "college_budget",
     title: "College Budget Challenge",
     description: "Manage your money during college semester",
+    difficulty: "medium",
     options: [
       {
         text: "Buy all new textbooks and eat out frequently",
@@ -210,7 +241,8 @@ export const scenarios = [
           risk: 20,
           xp: 15
         },
-        feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books, meal planning, and student discounts."
+        feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books, meal planning, and student discounts.",
+        isCorrect: false
       },
       {
         text: "Use library books and cook meals",
@@ -223,7 +255,8 @@ export const scenarios = [
           risk: -15,
           xp: 60
         },
-        feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health. This is a great way to build financial discipline."
+        feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health. This is a great way to build financial discipline.",
+        isCorrect: true
       },
       {
         text: "Mix of new and used resources",
@@ -236,7 +269,8 @@ export const scenarios = [
           risk: -5,
           xp: 45
         },
-        feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort. This shows good decision-making skills."
+        feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort. This shows good decision-making skills.",
+        isCorrect: false
       }
     ]
   },
@@ -244,6 +278,7 @@ export const scenarios = [
     id: "credit_card",
     title: "Credit Card Management",
     description: "You have a credit card with a $5,000 limit. How will you use it?",
+    difficulty: "hard",
     options: [
       {
         text: "Max out the card",
@@ -256,7 +291,8 @@ export const scenarios = [
           risk: 40,
           xp: 10
         },
-        feedback: "Maxing out your credit card is risky! High debt can lead to financial stress and damage your credit score. Consider using credit cards responsibly."
+        feedback: "Maxing out your credit card is risky! High debt can lead to financial stress and damage your credit score. Consider using credit cards responsibly.",
+        isCorrect: false
       },
       {
         text: "Use for emergencies only",
@@ -269,7 +305,8 @@ export const scenarios = [
           risk: -10,
           xp: 40
         },
-        feedback: "Smart choice! Using credit cards only for emergencies helps you maintain financial health and build good credit habits."
+        feedback: "Smart choice! Using credit cards only for emergencies helps you maintain financial health and build good credit habits.",
+        isCorrect: true
       },
       {
         text: "Use for daily expenses",
@@ -282,7 +319,8 @@ export const scenarios = [
           risk: 20,
           xp: 20
         },
-        feedback: "Using credit cards for daily expenses can be convenient, but make sure to pay off the balance in full each month to avoid interest charges."
+        feedback: "Using credit cards for daily expenses can be convenient, but make sure to pay off the balance in full each month to avoid interest charges.",
+        isCorrect: false
       }
     ]
   },
@@ -290,6 +328,7 @@ export const scenarios = [
     id: "investment_opportunity",
     title: "Investment Opportunity",
     description: "You've saved some money and have an opportunity to invest. How will you approach this decision?",
+    difficulty: "medium",
     options: [
       {
         text: "Invest everything in a high-risk stock",
@@ -302,7 +341,8 @@ export const scenarios = [
           risk: 30,
           xp: 25
         },
-        feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket."
+        feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket.",
+        isCorrect: false
       },
       {
         text: "Create a diversified portfolio",
@@ -315,7 +355,8 @@ export const scenarios = [
           risk: -10,
           xp: 60
         },
-        feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing."
+        feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing.",
+        isCorrect: true
       },
       {
         text: "Keep money in savings account only",
@@ -328,7 +369,8 @@ export const scenarios = [
           risk: -5,
           xp: 35
         },
-        feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions."
+        feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions.",
+        isCorrect: false
       }
     ]
   },
@@ -336,6 +378,7 @@ export const scenarios = [
     id: "emergency_fund",
     title: "Emergency Fund Challenge",
     description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
+    difficulty: "medium",
     options: [
       {
         text: "Use emergency fund and stop saving",
@@ -348,7 +391,8 @@ export const scenarios = [
           risk: 20,
           xp: 25
         },
-        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses."
+        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
+        isCorrect: false
       },
       {
         text: "Use emergency fund and increase savings",
@@ -361,7 +405,8 @@ export const scenarios = [
           risk: -10,
           xp: 60
         },
-        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline."
+        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
+        isCorrect: true
       },
       {
         text: "Take on debt instead of using emergency fund",
@@ -374,7 +419,8 @@ export const scenarios = [
           risk: 25,
           xp: 15
         },
-        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations."
+        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
+        isCorrect: false
       }
     ]
   }
