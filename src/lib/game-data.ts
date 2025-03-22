@@ -397,7 +397,7 @@ export const marketScenarios = [
         },
         feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market.",
         miniGame: {
-          type: "stock_picker",
+          type: "stock_picker" as const,
           bonus: 20
         }
       },
@@ -412,7 +412,7 @@ export const marketScenarios = [
         },
         feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first.",
         miniGame: {
-          type: "stock_picker",
+          type: "stock_picker" as const,
           bonus: 30
         }
       },
@@ -427,7 +427,7 @@ export const marketScenarios = [
         },
         feedback: "Professional advice is valuable, but make sure to understand the basics yourself too.",
         miniGame: {
-          type: "budget_planner",
+          type: "budget_planner" as const,
           bonus: 15
         }
       }
@@ -533,7 +533,7 @@ export const savingScenarios = [
         },
         feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
         miniGame: {
-          type: "savings_challenge",
+          type: "savings_challenge" as const,
           bonus: 10
         }
       },
@@ -549,7 +549,7 @@ export const savingScenarios = [
         },
         feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
         miniGame: {
-          type: "budget_planner",
+          type: "budget_planner" as const,
           bonus: 25
         }
       },
@@ -565,7 +565,7 @@ export const savingScenarios = [
         },
         feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
         miniGame: {
-          type: "savings_challenge",
+          type: "savings_challenge" as const,
           bonus: 5
         }
       }
