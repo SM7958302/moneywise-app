@@ -8,7 +8,7 @@ import { useGame } from "@/context/GameContext"
 import { learningModules } from "@/lib/game-data"
 
 export function LearningModule({ moduleId }: { moduleId: string }) {
-  const { addXP, completeLesson } = useGame()
+  const { addXP, completeScenario } = useGame()
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0)
   const [showQuiz, setShowQuiz] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
@@ -27,7 +27,7 @@ export function LearningModule({ moduleId }: { moduleId: string }) {
 
     if (correct) {
       addXP(50)
-      completeLesson(currentLesson.id)
+      completeScenario(currentLesson.id)
     }
   }
 
