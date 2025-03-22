@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -32,44 +33,52 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to register")
+        const data = await response.json()
+        throw new Error(data.message || "Failed to register")
       }
 
-      // Redirect to login page after successful registration
-      router.push("/login?registered=true")
+      toast.success("Registration successful! Please sign in.")
+      router.push("/login")
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+      setError(error instanceof Error ? error.message : "An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background flex flex-col">
       <Header />
-      <div className="container py-8 max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle>Create Account</CardTitle>
-            <CardDescription>Start your financial learning journey today</CardDescription>
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="w-full max-w-md border-2">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
+            <CardDescription className="text-center">
+              Start your financial learning journey today
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
                   name="name"
-                  placeholder="Enter your name"
+                  type="text"
+                  placeholder="Enter your full name"
                   required
                 />
               </div>
@@ -104,7 +113,7 @@ export default function RegisterPage() {
                 />
               </div>
               {error && (
-                <div className="text-sm text-red-500">
+                <div className="text-sm text-red-500 text-center">
                   {error}
                 </div>
               )}

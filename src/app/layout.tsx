@@ -7,7 +7,7 @@ import { NextAuthProvider } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FinWise - Financial Literacy for Youth",
+  title: "MoneyWise - Financial Literacy for Youth",
   description: "Learn financial management through interactive games and AI-powered guidance",
 };
 

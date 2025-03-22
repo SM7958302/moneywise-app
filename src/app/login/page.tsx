@@ -45,13 +45,15 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background flex flex-col">
       <Header />
-      <div className="container py-8 max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome Back</CardTitle>
-            <CardDescription>Sign in to continue your financial journey</CardDescription>
+      <div className="flex-1 flex items-center justify-center px-4">
+        <Card className="w-full max-w-md border-2">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
+            <CardDescription className="text-center">
+              Sign in to continue your financial journey
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,7 +78,7 @@ export default function LoginPage() {
                 />
               </div>
               {error && (
-                <div className="text-sm text-red-500">
+                <div className="text-sm text-red-500 text-center">
                   {error}
                 </div>
               )}
