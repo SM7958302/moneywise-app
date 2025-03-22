@@ -2,7 +2,10 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 import { useGame } from "@/context/GameContext"
+import { ShareButton } from "@/components/ui/share-button"
 import { achievements } from "@/lib/game-data"
 
 export function AchievementsPanel() {
@@ -14,6 +17,10 @@ export function AchievementsPanel() {
     ...achievements.investing,
     ...achievements.learning
   ]
+
+  const getAchievementDetails = (id: string) => {
+    return allAchievements.find(a => a.id === id)
+  }
 
   return (
     <motion.div
@@ -43,33 +50,56 @@ export function AchievementsPanel() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Achievements</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            {allAchievements.map(achievement => {
-              const isUnlocked = progress.achievements.includes(achievement.id)
-              return (
-                <div
-                  key={achievement.id}
-                  className={`p-4 rounded-lg border ${
-                    isUnlocked
-                      ? "bg-green-50 border-green-200"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <div className="text-2xl mb-2">{achievement.icon}</div>
-                  <h3 className="font-medium">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {achievement.description}
-                  </p>
-                  <p className="text-sm font-medium mt-2">
-                    {isUnlocked ? "Unlocked!" : `+${achievement.xp} XP`}
-                  </p>
-                </div>
-              )
-            })}
+          <div className="flex items-center justify-between">
+            <CardTitle>Achievements</CardTitle>
+            {progress.achievements.length > 0 && (
+              <ShareButton
+                title="My MoneyWise Achievements!"
+                text={`I've earned ${progress.achievements.length} achievements and ${progress.xp} XP in MoneyWise! 🏆`}
+              />
+            )}
           </div>
+          <div className="text-sm text-muted-foreground">
+            {progress.achievements.length} earned
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {allAchievements.map(achievement => {
+            const isUnlocked = progress.achievements.includes(achievement.id)
+            return (
+              <Card 
+                key={achievement.id} 
+                className={isUnlocked ? "border-primary" : "opacity-75"}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{achievement.icon}</span>
+                        <div>
+                          <h4 className="font-medium">{achievement.title}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {achievement.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={isUnlocked ? "default" : "secondary"}>
+                          {achievement.xp} XP
+                        </Badge>
+                        {isUnlocked && (
+                          <ShareButton
+                            title={`I earned the ${achievement.title} achievement in MoneyWise! 🎉`}
+                            text={`${achievement.description} (${achievement.xp} XP)`}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </CardContent>
       </Card>
 
