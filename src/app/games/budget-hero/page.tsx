@@ -31,141 +31,47 @@ const scenarios: Scenario[] = [
   {
     id: 1,
     title: "Emergency Car Repair",
-    description:
-      "Your car broke down and needs urgent repairs. The mechanic quoted $800 for the fix. What do you do?",
+    description: "Your car breaks down and needs a $2000 repair. What do you do?",
     options: [
       {
         text: "Use emergency fund",
-        impact: { savings: -800, xp: 50 },
-        feedback: "Good choice! Using your emergency fund is the right approach for unexpected expenses.",
+        impact: { savings: -2000, health: 10, xp: 80 },
+        feedback: "Smart choice! Using your emergency fund is exactly what it's for.",
       },
       {
-        text: "Put it on credit card",
-        impact: { debt: 800, xp: 20 },
-        feedback: "This could lead to high interest charges. Consider building an emergency fund for future situations.",
+        text: "Take out a loan",
+        impact: { debt: 2000, health: -10, xp: 40 },
+        feedback: "While this works, it adds interest costs. Consider building an emergency fund for next time.",
       },
       {
-        text: "Delay repairs",
-        impact: { health: -20, xp: 10 },
-        feedback: "Delaying repairs could lead to more expensive problems later. It's better to address issues promptly.",
+        text: "Delay repair",
+        impact: { health: -20, happiness: -10, xp: 20 },
+        feedback: "Delaying repairs can lead to bigger problems and higher costs later.",
       },
     ],
   },
   {
     id: 2,
     title: "Job Opportunity",
-    description:
-      "You've been offered a new job with a 20% higher salary but requires moving to a new city. What's your decision?",
+    description: "You're offered a new job with higher pay but requires moving. What's your decision?",
     options: [
       {
-        text: "Accept and move",
-        impact: { income: 2000, savings: -5000, xp: 100 },
-        feedback: "Taking calculated risks can lead to better opportunities. Just make sure to plan the move carefully.",
+        text: "Negotiate relocation package",
+        impact: { income: 1000, savings: 5000, happiness: 10, xp: 90 },
+        feedback: "Great negotiation! A relocation package helps offset moving costs.",
+      },
+      {
+        text: "Accept without package",
+        impact: { income: 1000, savings: -2000, happiness: 5, xp: 60 },
+        feedback: "While the pay increase is good, moving costs can be significant.",
       },
       {
         text: "Stay at current job",
-        impact: { happiness: 10, xp: 30 },
-        feedback: "Stability is important too. Sometimes the best decision is to stay where you're comfortable.",
-      },
-      {
-        text: "Negotiate remote work",
-        impact: { income: 1000, happiness: 5, xp: 80 },
-        feedback: "Great negotiation! You found a balanced solution that works for everyone.",
+        impact: { happiness: -10, xp: 30 },
+        feedback: "Staying comfortable can mean missing growth opportunities.",
       },
     ],
-  },
-  {
-    id: 3,
-    title: "Investment Opportunity",
-    description:
-      "A friend suggests investing in a new cryptocurrency that promises high returns. What's your response?",
-    options: [
-      {
-        text: "Research thoroughly",
-        impact: { savings: -1000, xp: 70 },
-        feedback: "Smart approach! Always do your research before investing in any opportunity.",
-      },
-      {
-        text: "Invest large amount",
-        impact: { savings: -5000, risk: 50, xp: 20 },
-        feedback: "Be cautious with high-risk investments. Never invest more than you can afford to lose.",
-      },
-      {
-        text: "Decline politely",
-        impact: { savings: 0, xp: 40 },
-        feedback: "Sometimes the best investment is saying no to risky opportunities.",
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: "Medical Emergency",
-    description:
-      "You need urgent dental work that costs $1200. Your insurance covers 50%. How do you handle this?",
-    options: [
-      {
-        text: "Use HSA/FSA funds",
-        impact: { savings: -600, xp: 60 },
-        feedback: "Using tax-advantaged accounts for medical expenses is a smart financial move.",
-      },
-      {
-        text: "Set up payment plan",
-        impact: { debt: 600, xp: 40 },
-        feedback: "Payment plans can help manage large expenses, but watch out for interest charges.",
-      },
-      {
-        text: "Delay treatment",
-        impact: { health: -30, xp: 10 },
-        feedback: "Medical issues should be addressed promptly to prevent more serious problems.",
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: "Housing Decision",
-    description:
-      "Your lease is ending, and you're deciding between renewing or buying a home. What's your choice?",
-    options: [
-      {
-        text: "Buy a home",
-        impact: { savings: -20000, debt: 200000, xp: 150 },
-        feedback: "Homeownership can be a good long-term investment, but make sure you're ready for the commitment.",
-      },
-      {
-        text: "Renew lease",
-        impact: { savings: -2000, xp: 40 },
-        feedback: "Sometimes renting is the better choice, especially if you're not ready for homeownership.",
-      },
-      {
-        text: "Find cheaper rental",
-        impact: { savings: 1000, xp: 60 },
-        feedback: "Reducing housing costs can free up money for other financial goals.",
-      },
-    ],
-  },
-  {
-    id: 6,
-    title: "Education Investment",
-    description:
-      "You have an opportunity to take a professional certification course that costs $2000. What do you do?",
-    options: [
-      {
-        text: "Use education fund",
-        impact: { savings: -2000, income: 500, xp: 100 },
-        feedback: "Investing in education often leads to better career opportunities and higher income.",
-      },
-      {
-        text: "Take out loan",
-        impact: { debt: 2000, income: 500, xp: 60 },
-        feedback: "Education loans can be worth it if they lead to better career prospects.",
-      },
-      {
-        text: "Find free alternatives",
-        impact: { savings: 0, income: 200, xp: 80 },
-        feedback: "There are many free or low-cost learning opportunities available online.",
-      },
-    ],
-  },
+  }
 ]
 
 export default function BudgetHeroGame() {
