@@ -7,12 +7,17 @@ import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 
 interface MiniGameProps {
-  type?: "budget_planner" | "stock_picker" | "savings_challenge"
+  type: "budget_planner" | "stock_picker" | "savings_challenge"
   onComplete: (result: number) => void
   onSkip: () => void
 }
 
-export function BudgetPlannerGame({ onComplete, onSkip }: MiniGameProps) {
+interface GameProps {
+  onComplete: (result: number) => void
+  onSkip: () => void
+}
+
+export function BudgetPlannerGame({ onComplete, onSkip }: GameProps) {
   const [timeLeft, setTimeLeft] = useState(30)
   const [score, setScore] = useState(0)
   const [items, setItems] = useState([
@@ -91,7 +96,7 @@ export function BudgetPlannerGame({ onComplete, onSkip }: MiniGameProps) {
   )
 }
 
-export function StockPickerGame({ onComplete, onSkip }: MiniGameProps) {
+export function StockPickerGame({ onComplete, onSkip }: GameProps) {
   const [timeLeft, setTimeLeft] = useState(30)
   const [score, setScore] = useState(0)
   const [stocks, setStocks] = useState([
@@ -170,7 +175,7 @@ export function StockPickerGame({ onComplete, onSkip }: MiniGameProps) {
   )
 }
 
-export function SavingsChallengeGame({ onComplete, onSkip }: MiniGameProps) {
+export function SavingsChallengeGame({ onComplete, onSkip }: GameProps) {
   const [timeLeft, setTimeLeft] = useState(30)
   const [score, setScore] = useState(0)
   const [expenses, setExpenses] = useState([
