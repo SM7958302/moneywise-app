@@ -28,11 +28,11 @@ const achievements = [
 ]
 
 export default function ProgressPage() {
-  const { progress } = useGame()
+  const { progress, xp } = useGame()
 
   const stats = {
     gamesCompleted: progress.completedScenarios.length,
-    totalXP: progress.xp,
+    totalXP: xp,
     totalGames: achievements.length,
     completionPercentage: (progress.completedScenarios.length / achievements.length) * 100
   }
