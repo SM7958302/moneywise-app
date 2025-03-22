@@ -35,10 +35,8 @@ export function BudgetPlannerGame({ onComplete, onSkip }: GameProps) {
         setTimeLeft(prev => prev - 1)
       }, 1000)
       return () => clearInterval(timer)
-    } else {
-      onComplete(score)
     }
-  }, [timeLeft, score, onComplete])
+  }, [timeLeft])
 
   const handleItemClick = (itemName: string) => {
     if (selectedItems.includes(itemName)) {
@@ -48,6 +46,10 @@ export function BudgetPlannerGame({ onComplete, onSkip }: GameProps) {
       setSelectedItems(prev => [...prev, itemName])
       setScore(prev => prev + 10)
     }
+  }
+
+  const handleAccept = () => {
+    onComplete(score)
   }
 
   return (
@@ -85,9 +87,12 @@ export function BudgetPlannerGame({ onComplete, onSkip }: GameProps) {
               </Button>
             ))}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onSkip}>
               Skip
+            </Button>
+            <Button onClick={handleAccept}>
+              Accept
             </Button>
           </div>
         </div>
@@ -114,10 +119,8 @@ export function StockPickerGame({ onComplete, onSkip }: GameProps) {
         setTimeLeft(prev => prev - 1)
       }, 1000)
       return () => clearInterval(timer)
-    } else {
-      onComplete(score)
     }
-  }, [timeLeft, score, onComplete])
+  }, [timeLeft])
 
   const handleStockClick = (stockName: string) => {
     if (selectedStocks.includes(stockName)) {
@@ -127,6 +130,10 @@ export function StockPickerGame({ onComplete, onSkip }: GameProps) {
       setSelectedStocks(prev => [...prev, stockName])
       setScore(prev => prev + 10)
     }
+  }
+
+  const handleAccept = () => {
+    onComplete(score)
   }
 
   return (
@@ -164,9 +171,12 @@ export function StockPickerGame({ onComplete, onSkip }: GameProps) {
               </Button>
             ))}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onSkip}>
               Skip
+            </Button>
+            <Button onClick={handleAccept}>
+              Accept
             </Button>
           </div>
         </div>
@@ -193,10 +203,8 @@ export function SavingsChallengeGame({ onComplete, onSkip }: GameProps) {
         setTimeLeft(prev => prev - 1)
       }, 1000)
       return () => clearInterval(timer)
-    } else {
-      onComplete(score)
     }
-  }, [timeLeft, score, onComplete])
+  }, [timeLeft])
 
   const handleExpenseClick = (expenseName: string) => {
     if (selectedExpenses.includes(expenseName)) {
@@ -206,6 +214,10 @@ export function SavingsChallengeGame({ onComplete, onSkip }: GameProps) {
       setSelectedExpenses(prev => [...prev, expenseName])
       setScore(prev => prev + 10)
     }
+  }
+
+  const handleAccept = () => {
+    onComplete(score)
   }
 
   return (
@@ -243,9 +255,12 @@ export function SavingsChallengeGame({ onComplete, onSkip }: GameProps) {
               </Button>
             ))}
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onSkip}>
               Skip
+            </Button>
+            <Button onClick={handleAccept}>
+              Accept
             </Button>
           </div>
         </div>

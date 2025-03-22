@@ -162,8 +162,14 @@ export default function MarketMasterGame() {
       <div className="container mx-auto p-4">
         <MiniGame
           type={currentOption.miniGame.type}
-          onComplete={handleMiniGameComplete}
-          onSkip={handleMiniGameSkip}
+          onComplete={(score) => {
+            handleMiniGameComplete(score)
+            setShowMiniGame(false)
+          }}
+          onSkip={() => {
+            handleMiniGameSkip()
+            setShowMiniGame(false)
+          }}
         />
       </div>
     )
