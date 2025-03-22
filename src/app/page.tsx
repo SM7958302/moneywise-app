@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Background } from "@/components/ui/background"
+import Image from "next/image"
 
 const games = [
   {
@@ -31,16 +33,10 @@ const games = [
 
 const tools = [
   {
-    id: "compound-calculator",
-    title: "Compound Interest Calculator",
-    description: "See how your money grows over time",
-    color: "bg-yellow-500"
-  },
-  {
-    id: "budget-planner",
-    title: "Budget Planner",
-    description: "Plan and track your monthly expenses",
-    color: "bg-pink-500"
+    name: "Currency Converter",
+    description: "Convert between different currencies with real-time exchange rates",
+    link: "/tools/currency-converter",
+    icon: "/currency-exchange.svg"
   }
 ]
 
@@ -48,72 +44,89 @@ export default function HomePage() {
   const [greeting] = useState("Welcome to MoneyWise! Let's learn about finance together!")
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center space-y-8 mb-16"
-        >
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-            MoneyWise
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            {greeting}
-          </p>
-        </motion.div>
+    <div className="container mx-auto px-4 py-8">
+      <Background />
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-4">Welcome to MoneyWise</h1>
+        <p className="text-gray-600 text-center mb-8">
+          Your personal finance learning platform
+        </p>
 
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Financial Games</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {games.map((game) => (
-              <motion.div
-                key={game.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link href={`/games/${game.id}`}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <div className={`w-full h-32 rounded-t-lg ${game.color} mb-4`} />
-                      <CardTitle>{game.title}</CardTitle>
-                      <CardDescription>{game.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-sm text-muted-foreground">
-                        Difficulty: {game.difficulty}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <Link href="/games">
+            <Card className="h-full hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-t-lg" />
+                <div className="relative">
+                  <div className="flex justify-center mb-4">
+                    <Image
+                      src="/game-controller.svg"
+                      alt="Games"
+                      width={80}
+                      height={80}
+                      className="opacity-80"
+                    />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-center">Financial Games</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="text-center text-gray-600">
+                Learn about money management through interactive games
+              </CardContent>
+            </Card>
+          </Link>
 
-        <section>
-          <h2 className="text-3xl font-bold mb-8 text-center">Financial Tools</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {tools.map((tool) => (
-              <motion.div
-                key={tool.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link href={`/tools/${tool.id}`}>
-                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardHeader>
-                      <div className={`w-full h-32 rounded-t-lg ${tool.color} mb-4`} />
-                      <CardTitle>{tool.title}</CardTitle>
-                      <CardDescription>{tool.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+          <Link href="/progress">
+            <Card className="h-full hover:shadow-lg transition-shadow duration-200">
+              <CardHeader className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-t-lg" />
+                <div className="relative">
+                  <div className="flex justify-center mb-4">
+                    <Image
+                      src="/progress-chart.svg"
+                      alt="Progress"
+                      width={80}
+                      height={80}
+                      className="opacity-80"
+                    />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-center">Track Progress</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="text-center text-gray-600">
+                Monitor your learning journey and achievements
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        <h2 className="text-3xl font-bold text-center mb-6">Financial Tools</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {tools.map((tool) => (
+            <Link key={tool.name} href={tool.link}>
+              <Card className="h-full hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 rounded-t-lg" />
+                  <div className="relative">
+                    <div className="flex justify-center mb-4">
+                      <Image
+                        src={tool.icon}
+                        alt={tool.name}
+                        width={80}
+                        height={80}
+                        className="opacity-80"
+                      />
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-center">{tool.name}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="text-center text-gray-600">
+                  {tool.description}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   )
