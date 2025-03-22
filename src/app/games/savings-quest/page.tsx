@@ -97,7 +97,7 @@ const scenarios: Scenario[] = [
   {
     id: 4,
     title: "Savings Challenge",
-    description: "Your friend suggests a "no-spend" month challenge. How do you participate?",
+    description: "Your friend suggests a \"no-spend\" month challenge. How do you participate?",
     options: [
       {
         text: "Set specific rules",
