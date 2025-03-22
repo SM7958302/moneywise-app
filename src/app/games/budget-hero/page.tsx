@@ -1,307 +1,318 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { useGame } from "@/context/GameContext"
-import { scenarios } from "@/lib/game-data"
-import { AchievementsPanel } from "@/components/game/AchievementsPanel"
-import { FriendsPanel } from "@/components/game/FriendsPanel"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { motion, AnimatePresence } from "framer-motion"
+import { ShareButton } from "@/components/ui/share-button"
+
+interface Scenario {
+  id: number
+  title: string
+  description: string
+  options: {
+    text: string
+    impact: {
+      savings?: number
+      debt?: number
+      income?: number
+      health?: number
+      happiness?: number
+      risk?: number
+      xp: number
+    }
+    feedback: string
+  }[]
+}
+
+const scenarios: Scenario[] = [
+  {
+    id: 1,
+    title: "Emergency Car Repair",
+    description:
+      "Your car broke down and needs urgent repairs. The mechanic quoted $800 for the fix. What do you do?",
+    options: [
+      {
+        text: "Use emergency fund",
+        impact: { savings: -800, xp: 50 },
+        feedback: "Good choice! Using your emergency fund is the right approach for unexpected expenses.",
+      },
+      {
+        text: "Put it on credit card",
+        impact: { debt: 800, xp: 20 },
+        feedback: "This could lead to high interest charges. Consider building an emergency fund for future situations.",
+      },
+      {
+        text: "Delay repairs",
+        impact: { health: -20, xp: 10 },
+        feedback: "Delaying repairs could lead to more expensive problems later. It's better to address issues promptly.",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "Job Opportunity",
+    description:
+      "You've been offered a new job with a 20% higher salary but requires moving to a new city. What's your decision?",
+    options: [
+      {
+        text: "Accept and move",
+        impact: { income: 2000, savings: -5000, xp: 100 },
+        feedback: "Taking calculated risks can lead to better opportunities. Just make sure to plan the move carefully.",
+      },
+      {
+        text: "Stay at current job",
+        impact: { happiness: 10, xp: 30 },
+        feedback: "Stability is important too. Sometimes the best decision is to stay where you're comfortable.",
+      },
+      {
+        text: "Negotiate remote work",
+        impact: { income: 1000, happiness: 5, xp: 80 },
+        feedback: "Great negotiation! You found a balanced solution that works for everyone.",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "Investment Opportunity",
+    description:
+      "A friend suggests investing in a new cryptocurrency that promises high returns. What's your response?",
+    options: [
+      {
+        text: "Research thoroughly",
+        impact: { savings: -1000, xp: 70 },
+        feedback: "Smart approach! Always do your research before investing in any opportunity.",
+      },
+      {
+        text: "Invest large amount",
+        impact: { savings: -5000, risk: 50, xp: 20 },
+        feedback: "Be cautious with high-risk investments. Never invest more than you can afford to lose.",
+      },
+      {
+        text: "Decline politely",
+        impact: { savings: 0, xp: 40 },
+        feedback: "Sometimes the best investment is saying no to risky opportunities.",
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Medical Emergency",
+    description:
+      "You need urgent dental work that costs $1200. Your insurance covers 50%. How do you handle this?",
+    options: [
+      {
+        text: "Use HSA/FSA funds",
+        impact: { savings: -600, xp: 60 },
+        feedback: "Using tax-advantaged accounts for medical expenses is a smart financial move.",
+      },
+      {
+        text: "Set up payment plan",
+        impact: { debt: 600, xp: 40 },
+        feedback: "Payment plans can help manage large expenses, but watch out for interest charges.",
+      },
+      {
+        text: "Delay treatment",
+        impact: { health: -30, xp: 10 },
+        feedback: "Medical issues should be addressed promptly to prevent more serious problems.",
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Housing Decision",
+    description:
+      "Your lease is ending, and you're deciding between renewing or buying a home. What's your choice?",
+    options: [
+      {
+        text: "Buy a home",
+        impact: { savings: -20000, debt: 200000, xp: 150 },
+        feedback: "Homeownership can be a good long-term investment, but make sure you're ready for the commitment.",
+      },
+      {
+        text: "Renew lease",
+        impact: { savings: -2000, xp: 40 },
+        feedback: "Sometimes renting is the better choice, especially if you're not ready for homeownership.",
+      },
+      {
+        text: "Find cheaper rental",
+        impact: { savings: 1000, xp: 60 },
+        feedback: "Reducing housing costs can free up money for other financial goals.",
+      },
+    ],
+  },
+  {
+    id: 6,
+    title: "Education Investment",
+    description:
+      "You have an opportunity to take a professional certification course that costs $2000. What do you do?",
+    options: [
+      {
+        text: "Use education fund",
+        impact: { savings: -2000, income: 500, xp: 100 },
+        feedback: "Investing in education often leads to better career opportunities and higher income.",
+      },
+      {
+        text: "Take out loan",
+        impact: { debt: 2000, income: 500, xp: 60 },
+        feedback: "Education loans can be worth it if they lead to better career prospects.",
+      },
+      {
+        text: "Find free alternatives",
+        impact: { savings: 0, income: 200, xp: 80 },
+        feedback: "There are many free or low-cost learning opportunities available online.",
+      },
+    ],
+  },
+]
 
 export default function BudgetHeroGame() {
-  const { addXP, unlockAchievement, completeScenario, progress } = useGame()
-  const [gameStarted, setGameStarted] = useState(false)
-  const [currentScenario, setCurrentScenario] = useState(scenarios[0])
-  const [income, setIncome] = useState(currentScenario.monthlyIncome)
-  const [expenses, setExpenses] = useState<Record<string, number>>(
-    Object.fromEntries(
-      currentScenario.expenses.map(exp => [exp.id, exp.recommended])
-    )
-  )
-  const [showTip, setShowTip] = useState(true)
-  const [monthsCompleted, setMonthsCompleted] = useState(0)
-  const [isGameComplete, setIsGameComplete] = useState(false)
-  const [consecutiveSavingMonths, setConsecutiveSavingMonths] = useState(0)
+  const { addXP, level, xp, xpToNextLevel } = useGame()
+  const [currentScenario, setCurrentScenario] = useState(0)
+  const [gameState, setGameState] = useState({
+    savings: 5000,
+    debt: 0,
+    income: 3000,
+    health: 100,
+    happiness: 50,
+    risk: 0,
+  })
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [feedback, setFeedback] = useState("")
+  const [gameComplete, setGameComplete] = useState(false)
 
-  const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
-  const remaining = income - totalExpenses
-  const savingsRate = (remaining / income) * 100
-
-  const handleStartGame = () => {
-    setGameStarted(true)
-    if (!progress.achievements.includes("first_budget")) {
-      unlockAchievement("first_budget")
-      addXP(50) // XP for first_budget achievement
-    }
-  }
-
-  const handleExpenseChange = (category: string, value: string) => {
-    const numValue = parseInt(value) || 0
-    setExpenses(prev => ({
-      ...prev,
-      [category]: numValue
-    }))
-  }
-
-  const handleNextMonth = () => {
-    if (isGameComplete) return;
-
-    const newMonthsCompleted = monthsCompleted + 1
-    setMonthsCompleted(newMonthsCompleted)
-
-    // Track consecutive months of good savings
-    if (savingsRate >= 20) {
-      setConsecutiveSavingMonths(prev => prev + 1)
-    } else {
-      setConsecutiveSavingMonths(0)
-    }
-    
-    // Check if goals are met
-    const goalsMet = currentScenario.goals.every(goal => {
-      if (goal.id === "emergency" || goal.id === "savings") {
-        return remaining >= goal.amount
-      }
-      return expenses[goal.id] <= goal.amount // Changed from >= to <= since we want to stay within budget
-    })
-
-    // Check for achievements
-    if (consecutiveSavingMonths >= 3 && !progress.achievements.includes("saving_star")) {
-      unlockAchievement("saving_star")
-      addXP(100) // XP for saving_star achievement
-    }
-
-    if (newMonthsCompleted >= 3 && !progress.achievements.includes("expense_master")) {
-      unlockAchievement("expense_master")
-      addXP(75) // XP for expense_master achievement
-    }
-
-    if (!progress.achievements.includes("first_budget")) {
-      unlockAchievement("first_budget")
-      addXP(50) // XP for first_budget achievement
-    }
-
-    if (goalsMet && !progress.completedScenarios.includes(currentScenario.id)) {
-      // Award XP for completing the scenario
-      addXP(200)
-      completeScenario(currentScenario.id)
-      
-      // Move to next scenario if available
-      const nextScenarioIndex = scenarios.findIndex(s => s.id === currentScenario.id) + 1
-      if (scenarios[nextScenarioIndex]) {
-        setCurrentScenario(scenarios[nextScenarioIndex])
-        setIncome(scenarios[nextScenarioIndex].monthlyIncome)
-        setExpenses(
-          Object.fromEntries(
-            scenarios[nextScenarioIndex].expenses.map(exp => [exp.id, exp.recommended])
-          )
-        )
-        setMonthsCompleted(0)
-        setConsecutiveSavingMonths(0)
+  const handleChoice = (option: Scenario["options"][0]) => {
+    const newState = { ...gameState }
+    Object.entries(option.impact).forEach(([key, value]) => {
+      if (key === "xp") {
+        addXP(value)
       } else {
-        setIsGameComplete(true)
+        newState[key as keyof typeof newState] += value
       }
-    }
+    })
+    setGameState(newState)
+    setFeedback(option.feedback)
+    setShowFeedback(true)
+
+    setTimeout(() => {
+      if (currentScenario < scenarios.length - 1) {
+        setCurrentScenario(currentScenario + 1)
+        setShowFeedback(false)
+      } else {
+        setGameComplete(true)
+      }
+    }, 2000)
   }
 
-  if (!gameStarted) {
-    return (
-      <div className="min-h-screen bg-background p-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
-          >
-            <h1 className="text-5xl font-bold mb-4">Budget Hero</h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Master your budgeting skills and become a financial hero!
-            </p>
-            
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <h2 className="text-2xl font-semibold mb-4">How to Play</h2>
-                <ul className="text-left space-y-4 mb-6">
-                  <li>🎯 Complete financial scenarios</li>
-                  <li>💰 Manage your income and expenses</li>
-                  <li>🏆 Earn achievements and XP</li>
-                  <li>📈 Build good saving habits</li>
-                  <li>🤝 Challenge friends and compete</li>
-                </ul>
-                <p className="text-muted-foreground mb-6">
-                  Ready to start your journey to financial mastery?
-                </p>
-                <Button 
-                  size="lg" 
-                  onClick={handleStartGame}
-                  className="w-full md:w-auto"
-                >
-                  Start Game
-                </Button>
-              </CardContent>
-            </Card>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Learn</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Master budgeting concepts through interactive scenarios
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Practice</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Apply your knowledge in real-world situations
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Compete</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Challenge friends and climb the leaderboard
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    )
+  const resetGame = () => {
+    setCurrentScenario(0)
+    setGameState({
+      savings: 5000,
+      debt: 0,
+      income: 3000,
+      health: 100,
+      happiness: 50,
+      risk: 0,
+    })
+    setShowFeedback(false)
+    setGameComplete(false)
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:col-span-2 space-y-8"
-        >
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Budget Hero</h1>
-            <p className="text-muted-foreground">Master your budgeting skills!</p>
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Budget Hero</h1>
+        <div className="flex items-center gap-4">
+          <div className="text-sm">
+            Level {level} • {xp}/{xpToNextLevel} XP
           </div>
+          <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
+        </div>
+      </div>
 
-          {showTip && (
-            <Card className="bg-blue-50">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
+      {!gameComplete ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentScenario}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">
+                  Scenario {currentScenario + 1} of {scenarios.length}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
                   <div>
-                    <h3 className="font-medium mb-2">Quick Tip!</h3>
-                    <p className="text-sm">
-                      Try to save at least 20% of your income. This helps build an
-                      emergency fund and secure your financial future.
+                    <h2 className="text-lg font-semibold mb-2">
+                      {scenarios[currentScenario].title}
+                    </h2>
+                    <p className="text-muted-foreground">
+                      {scenarios[currentScenario].description}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowTip(false)}
-                  >
-                    ✕
-                  </Button>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {scenarios[currentScenario].options.map((option, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="h-auto py-4"
+                        onClick={() => handleChoice(option)}
+                      >
+                        {option.text}
+                      </Button>
+                    ))}
+                  </div>
+
+                  {showFeedback && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-4 bg-primary/10 rounded-lg"
+                    >
+                      {feedback}
+                    </motion.div>
+                  )}
                 </div>
               </CardContent>
             </Card>
-          )}
-
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Scenario: {currentScenario.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">{currentScenario.description}</p>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Monthly Income
-                  </label>
-                  <input
-                    type="number"
-                    value={income}
-                    onChange={(e) => setIncome(parseInt(e.target.value) || 0)}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
+          </motion.div>
+        </AnimatePresence>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Game Complete!</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p>Congratulations on completing Budget Hero!</p>
+              <p>Final Stats:</p>
+              <ul className="list-disc list-inside space-y-2">
+                <li>Savings: ${gameState.savings}</li>
+                <li>Debt: ${gameState.debt}</li>
+                <li>Income: ${gameState.income}</li>
+                <li>Health: {gameState.health}%</li>
+                <li>Happiness: {gameState.happiness}%</li>
+                <li>Risk Level: {gameState.risk}%</li>
+              </ul>
+              <div className="flex gap-4">
+                <Button onClick={resetGame}>Play Again</Button>
+                <ShareButton
+                  title="I completed Budget Hero!"
+                  text={`I reached level ${level} and managed my finances well! Can you beat my score?`}
+                />
               </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {currentScenario.expenses.map(expense => (
-              <Card key={expense.id}>
-                <CardHeader>
-                  <CardTitle className="capitalize">{expense.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <input
-                    type="number"
-                    value={expenses[expense.id]}
-                    onChange={(e) => handleExpenseChange(expense.id, e.target.value)}
-                    className="w-full p-2 border rounded"
-                  />
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Recommended: ${expense.recommended}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <Card className={remaining >= 0 ? "bg-green-50" : "bg-red-50"}>
-            <CardHeader>
-              <CardTitle>Monthly Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p>Total Income: ${income}</p>
-                <p>Total Expenses: ${totalExpenses}</p>
-                <p className={remaining >= 0 ? "text-green-600" : "text-red-600"}>
-                  {remaining >= 0 ? "Savings" : "Deficit"}: ${Math.abs(remaining)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Savings Rate: {Math.round(savingsRate)}%
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end">
-            <Button 
-              onClick={handleNextMonth}
-              disabled={isGameComplete}
-            >
-              {isGameComplete ? "Game Complete!" : "Complete Month"}
-            </Button>
-          </div>
-        </motion.div>
-
-        <div className="md:col-span-1">
-          <Tabs defaultValue="achievements">
-            <TabsList className="w-full">
-              <TabsTrigger value="achievements" className="flex-1">Achievements</TabsTrigger>
-              <TabsTrigger value="friends" className="flex-1">Friends</TabsTrigger>
-            </TabsList>
-            <TabsContent value="achievements">
-              <AchievementsPanel />
-            </TabsContent>
-            <TabsContent value="friends">
-              <FriendsPanel />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 } 

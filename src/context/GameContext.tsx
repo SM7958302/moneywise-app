@@ -1,110 +1,85 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 import { levels, type GameProgress } from "@/lib/game-data"
 
-type GameContextType = {
-  progress: GameProgress
+interface GameContextType {
+  level: number
+  xp: number
+  xpToNextLevel: number
   addXP: (amount: number) => void
   unlockAchievement: (id: string) => void
-  completeLesson: (id: string) => void
   completeScenario: (id: string) => void
-  getCurrentLevel: () => { title: string; progress: number }
+  progress: {
+    completedScenarios: string[]
+    unlockedAchievements: string[]
+  }
 }
 
-const defaultProgress: GameProgress = {
-  level: 1,
-  xp: 0,
-  achievements: [],
-  completedLessons: [],
-  completedScenarios: []
-}
-
-const GameContext = createContext<GameContextType | null>(null)
+const GameContext = createContext<GameContextType | undefined>(undefined)
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [progress, setProgress] = useState<GameProgress>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("gameProgress")
-      return saved ? JSON.parse(saved) : defaultProgress
-    }
-    return defaultProgress
+  const [level, setLevel] = useState(1)
+  const [xp, setXp] = useState(0)
+  const [progress, setProgress] = useState({
+    completedScenarios: [] as string[],
+    unlockedAchievements: [] as string[],
   })
 
+  const xpToNextLevel = level * 1000
+
   useEffect(() => {
-    localStorage.setItem("gameProgress", JSON.stringify(progress))
-  }, [progress])
+    const savedData = localStorage.getItem("gameProgress")
+    if (savedData) {
+      const { level: savedLevel, xp: savedXp, progress: savedProgress } = JSON.parse(savedData)
+      setLevel(savedLevel)
+      setXp(savedXp)
+      setProgress(savedProgress)
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem(
+      "gameProgress",
+      JSON.stringify({ level, xp, progress })
+    )
+  }, [level, xp, progress])
 
   const addXP = (amount: number) => {
-    setProgress(prev => {
-      const newXP = prev.xp + amount
-      let newLevel = prev.level
-
-      // Check if player should level up
-      while (newLevel < levels.length && newXP >= levels[newLevel].xpNeeded) {
-        newLevel++
+    setXp((prev) => {
+      const newXp = prev + amount
+      if (newXp >= xpToNextLevel) {
+        setLevel((prevLevel) => prevLevel + 1)
+        return newXp - xpToNextLevel
       }
-
-      return {
-        ...prev,
-        xp: newXP,
-        level: newLevel
-      }
+      return newXp
     })
   }
 
   const unlockAchievement = (id: string) => {
-    if (!progress.achievements.includes(id)) {
-      setProgress(prev => ({
-        ...prev,
-        achievements: [...prev.achievements, id]
-      }))
-    }
-  }
-
-  const completeLesson = (id: string) => {
-    if (!progress.completedLessons.includes(id)) {
-      setProgress(prev => ({
-        ...prev,
-        completedLessons: [...prev.completedLessons, id]
-      }))
-    }
+    setProgress((prev) => ({
+      ...prev,
+      unlockedAchievements: [...prev.unlockedAchievements, id],
+    }))
   }
 
   const completeScenario = (id: string) => {
-    if (!progress.completedScenarios.includes(id)) {
-      setProgress(prev => ({
-        ...prev,
-        completedScenarios: [...prev.completedScenarios, id]
-      }))
-    }
-  }
-
-  const getCurrentLevel = () => {
-    const currentLevelIndex = progress.level - 1
-    const currentLevel = levels[currentLevelIndex]
-    const nextLevelIndex = currentLevelIndex + 1
-    const nextLevel = nextLevelIndex < levels.length ? levels[nextLevelIndex] : null
-    
-    const xpForCurrentLevel = progress.xp - currentLevel.xpNeeded
-    const xpNeededForNextLevel = nextLevel ? nextLevel.xpNeeded - currentLevel.xpNeeded : 0
-    const progressPercent = xpNeededForNextLevel ? (xpForCurrentLevel / xpNeededForNextLevel) * 100 : 100
-
-    return {
-      title: currentLevel.title,
-      progress: progressPercent
-    }
+    setProgress((prev) => ({
+      ...prev,
+      completedScenarios: [...prev.completedScenarios, id],
+    }))
   }
 
   return (
     <GameContext.Provider
       value={{
-        progress,
+        level,
+        xp,
+        xpToNextLevel,
         addXP,
         unlockAchievement,
-        completeLesson,
         completeScenario,
-        getCurrentLevel
+        progress,
       }}
     >
       {children}
@@ -114,7 +89,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
 export function useGame() {
   const context = useContext(GameContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useGame must be used within a GameProvider")
   }
   return context
