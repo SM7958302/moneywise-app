@@ -380,6 +380,261 @@ export const scenarios = [
   }
 ]
 
+export const marketScenarios = [
+  {
+    id: "stock_basics",
+    title: "Stock Market Basics",
+    description: "You're new to investing and want to start with stocks. What's your first move?",
+    options: [
+      {
+        text: "Research index funds",
+        impact: {
+          portfolio: 1000,
+          cash: -1000,
+          knowledge: 20,
+          risk: 20,
+          xp: 50
+        },
+        feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market."
+      },
+      {
+        text: "Buy individual stocks",
+        impact: {
+          portfolio: 2000,
+          cash: -2000,
+          knowledge: 10,
+          risk: 60,
+          xp: 30
+        },
+        feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first."
+      },
+      {
+        text: "Consult a financial advisor",
+        impact: {
+          portfolio: 0,
+          cash: -500,
+          knowledge: 30,
+          risk: 10,
+          xp: 40
+        },
+        feedback: "Professional advice is valuable, but make sure to understand the basics yourself too."
+      }
+    ]
+  },
+  {
+    id: "market_volatility",
+    title: "Market Volatility",
+    description: "The market is experiencing high volatility. How do you react?",
+    options: [
+      {
+        text: "Stay invested",
+        impact: {
+          portfolio: 1500,
+          cash: 0,
+          knowledge: 15,
+          risk: 30,
+          xp: 80
+        },
+        feedback: "Smart move! Staying invested during volatility often leads to better long-term returns."
+      },
+      {
+        text: "Sell everything",
+        impact: {
+          portfolio: -1000,
+          cash: 1000,
+          knowledge: 5,
+          risk: 0,
+          xp: 20
+        },
+        feedback: "Selling during market dips can lock in losses. Consider your long-term goals."
+      },
+      {
+        text: "Buy more",
+        impact: {
+          portfolio: 2000,
+          cash: -2000,
+          knowledge: 10,
+          risk: 50,
+          xp: 60
+        },
+        feedback: "Buying during dips can be good, but make sure you have a diversified portfolio."
+      }
+    ]
+  },
+  {
+    id: "dividend_investing",
+    title: "Dividend Investing",
+    description: "You're considering dividend stocks for passive income. What's your approach?",
+    options: [
+      {
+        text: "Research dividend aristocrats",
+        impact: {
+          portfolio: 1000,
+          cash: 500,
+          knowledge: 20,
+          risk: 30,
+          xp: 70
+        },
+        feedback: "Dividend aristocrats are reliable companies with a history of increasing dividends."
+      },
+      {
+        text: "Focus on high yield",
+        impact: {
+          portfolio: 2000,
+          cash: 1000,
+          knowledge: 10,
+          risk: 60,
+          xp: 40
+        },
+        feedback: "High yield can be tempting, but watch out for unsustainable dividend rates."
+      },
+      {
+        text: "Diversify across sectors",
+        impact: {
+          portfolio: 1500,
+          cash: 800,
+          knowledge: 15,
+          risk: 40,
+          xp: 60
+        },
+        feedback: "Diversification helps reduce risk while maintaining good income potential."
+      }
+    ]
+  }
+]
+
+export const savingScenarios = [
+  {
+    id: "emergency_fund",
+    title: "Emergency Fund Challenge",
+    description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
+    options: [
+      {
+        text: "Use emergency fund and stop saving",
+        impact: {
+          savings: -1000,
+          debt: 0,
+          income: 0,
+          discipline: -10,
+          risk: 20,
+          xp: 25
+        },
+        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses."
+      },
+      {
+        text: "Use emergency fund and increase savings",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          discipline: 15,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline."
+      },
+      {
+        text: "Take on debt instead of using emergency fund",
+        impact: {
+          savings: 0,
+          debt: 1000,
+          income: 0,
+          discipline: -10,
+          risk: 25,
+          xp: 15
+        },
+        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations."
+      }
+    ]
+  },
+  {
+    id: "savings_goal",
+    title: "Savings Goal Challenge",
+    description: "You've set a goal to save for a major purchase. How will you approach it?",
+    options: [
+      {
+        text: "Cut all non-essential spending",
+        impact: {
+          savings: 800,
+          debt: 0,
+          income: 0,
+          discipline: 20,
+          risk: -5,
+          xp: 50
+        },
+        feedback: "Cutting non-essential spending is effective, but make sure your cuts are sustainable long-term."
+      },
+      {
+        text: "Find ways to increase income",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 300,
+          discipline: 15,
+          risk: -5,
+          xp: 60
+        },
+        feedback: "Increasing income while maintaining good spending habits is a great way to reach your savings goals faster."
+      },
+      {
+        text: "Take on a side job",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 800,
+          discipline: 10,
+          risk: 10,
+          xp: 40
+        },
+        feedback: "A side job can boost your savings, but be careful not to burn out. Balance is important."
+      }
+    ]
+  },
+  {
+    id: "debt_management",
+    title: "Debt Management Challenge",
+    description: "You have multiple debts to manage. What's your strategy?",
+    options: [
+      {
+        text: "Pay highest interest first",
+        impact: {
+          savings: -500,
+          debt: -1000,
+          income: 0,
+          discipline: 15,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Paying off high-interest debt first is mathematically optimal and saves you money in the long run."
+      },
+      {
+        text: "Pay smallest balance first",
+        impact: {
+          savings: -300,
+          debt: -500,
+          income: 0,
+          discipline: 10,
+          risk: -5,
+          xp: 40
+        },
+        feedback: "The snowball method can provide psychological wins, but may cost more in interest."
+      },
+      {
+        text: "Make minimum payments only",
+        impact: {
+          savings: 0,
+          debt: -200,
+          income: 0,
+          discipline: -10,
+          risk: 20,
+          xp: 15
+        },
+        feedback: "Minimum payments keep you in debt longer and cost more in interest. Consider paying more when possible."
+      }
+    ]
+  }
+]
+
 export type GameProgress = {
   level: number
   xp: number

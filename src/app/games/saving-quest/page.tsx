@@ -7,27 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
-import { marketScenarios } from "@/lib/game-data"
+import { savingScenarios } from "@/lib/game-data"
 
 interface ScenarioOption {
   text: string
   impact: {
-    portfolio: number
-    cash: number
-    knowledge: number
+    savings: number
+    debt: number
+    income: number
+    discipline: number
     risk: number
     xp: number
   }
   feedback: string
 }
 
-export default function MarketMasterGame() {
+export default function SavingQuestGame() {
   const { addXP, level, xp, xpToNextLevel, completeScenario } = useGame()
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
   const [gameState, setGameState] = useState({
-    portfolio: 10000,
-    cash: 5000,
-    knowledge: 50,
+    savings: 5000,
+    debt: 2000,
+    income: 3000,
+    discipline: 50,
     risk: 0
   })
   const [showFeedback, setShowFeedback] = useState(false)
@@ -38,7 +40,7 @@ export default function MarketMasterGame() {
 
   useEffect(() => {
     try {
-      if (!marketScenarios || marketScenarios.length === 0) {
+      if (!savingScenarios || savingScenarios.length === 0) {
         throw new Error("No scenarios available")
       }
       setIsLoading(false)
@@ -48,15 +50,16 @@ export default function MarketMasterGame() {
     }
   }, [])
 
-  const currentScenario = marketScenarios[currentScenarioIndex]
+  const currentScenario = savingScenarios[currentScenarioIndex]
   if (!currentScenario || !currentScenario.options) return null
 
   const handleChoice = (option: ScenarioOption) => {
     try {
       setGameState(prev => ({
-        portfolio: Math.max(0, prev.portfolio + option.impact.portfolio),
-        cash: Math.max(0, prev.cash + option.impact.cash),
-        knowledge: Math.max(0, Math.min(100, prev.knowledge + option.impact.knowledge)),
+        savings: Math.max(0, prev.savings + option.impact.savings),
+        debt: Math.max(0, prev.debt + option.impact.debt),
+        income: Math.max(0, prev.income + option.impact.income),
+        discipline: Math.max(0, Math.min(100, prev.discipline + option.impact.discipline)),
         risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
       }))
 
@@ -67,7 +70,7 @@ export default function MarketMasterGame() {
       setShowFeedback(true)
 
       setTimeout(() => {
-        if (currentScenarioIndex < marketScenarios.length - 1) {
+        if (currentScenarioIndex < savingScenarios.length - 1) {
           setCurrentScenarioIndex(prev => prev + 1)
           setShowFeedback(false)
         } else {
@@ -83,9 +86,10 @@ export default function MarketMasterGame() {
     try {
       setCurrentScenarioIndex(0)
       setGameState({
-        portfolio: 10000,
-        cash: 5000,
-        knowledge: 50,
+        savings: 5000,
+        debt: 2000,
+        income: 3000,
+        discipline: 50,
         risk: 0
       })
       setShowFeedback(false)
@@ -129,9 +133,9 @@ export default function MarketMasterGame() {
         className="space-y-6"
       >
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">Market Master</h1>
+          <h1 className="text-4xl font-bold mb-2">Saving Quest</h1>
           <p className="text-muted-foreground">
-            Learn about stock market investing and portfolio management
+            Master the art of saving and financial discipline
           </p>
           <div className="flex items-center justify-center gap-4 mt-4">
             <div className="text-sm">
@@ -145,7 +149,7 @@ export default function MarketMasterGame() {
           <CardHeader>
             <CardTitle>{currentScenario.title}</CardTitle>
             <div className="text-sm text-muted-foreground">
-              Scenario {currentScenarioIndex + 1} of {marketScenarios.length}
+              Scenario {currentScenarioIndex + 1} of {savingScenarios.length}
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -181,20 +185,20 @@ export default function MarketMasterGame() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Portfolio Value</p>
-                <p className="text-2xl font-bold">${gameState.portfolio}</p>
+                <p className="text-sm text-muted-foreground">Savings</p>
+                <p className="text-2xl font-bold">${gameState.savings}</p>
               </div>
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Cash</p>
-                <p className="text-2xl font-bold">${gameState.cash}</p>
+                <p className="text-sm text-muted-foreground">Debt</p>
+                <p className="text-2xl font-bold">${gameState.debt}</p>
               </div>
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Market Knowledge</p>
-                <p className="text-2xl font-bold">{gameState.knowledge}%</p>
+                <p className="text-sm text-muted-foreground">Income</p>
+                <p className="text-2xl font-bold">${gameState.income}</p>
               </div>
               <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Risk Level</p>
-                <p className="text-2xl font-bold">{gameState.risk}%</p>
+                <p className="text-sm text-muted-foreground">Discipline</p>
+                <p className="text-2xl font-bold">{gameState.discipline}%</p>
               </div>
             </div>
           </CardContent>
@@ -208,19 +212,20 @@ export default function MarketMasterGame() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <p>Congratulations on completing Market Master!</p>
+              <p>Congratulations on completing Saving Quest!</p>
               <p>Final Stats:</p>
               <ul className="list-disc list-inside space-y-2">
-                <li>Portfolio Value: ${gameState.portfolio}</li>
-                <li>Cash: ${gameState.cash}</li>
-                <li>Market Knowledge: {gameState.knowledge}%</li>
+                <li>Savings: ${gameState.savings}</li>
+                <li>Debt: ${gameState.debt}</li>
+                <li>Income: ${gameState.income}</li>
+                <li>Discipline: {gameState.discipline}%</li>
                 <li>Risk Level: {gameState.risk}%</li>
               </ul>
               <div className="flex gap-4">
                 <Button onClick={resetGame}>Play Again</Button>
                 <ShareButton
-                  title="I completed Market Master!"
-                  text={`I reached level ${level} and grew my portfolio to $${gameState.portfolio}! Can you beat my score?`}
+                  title="I completed Saving Quest!"
+                  text={`I reached level ${level} and saved $${gameState.savings}! Can you beat my score?`}
                 />
               </div>
             </div>
