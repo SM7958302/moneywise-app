@@ -179,6 +179,52 @@ export const scenarios = [
       { id: "savings", description: "Save $500 for next semester", amount: 500 },
       { id: "emergency", description: "Keep $200 for emergencies", amount: 200 }
     ]
+  },
+  {
+    id: "credit-card-management",
+    title: "Credit Card Management",
+    description: "You've received your first credit card with a $1,000 limit. You need to make some essential purchases and want to manage your credit responsibly.",
+    options: [
+      {
+        text: "Use the card for all purchases and pay minimum balance",
+        impact: {
+          savings: -200,
+          debt: 800,
+          income: 0,
+          health: -10,
+          happiness: -10,
+          risk: 20,
+          xp: 20
+        },
+        feedback: "Using only minimum payments leads to high interest charges and growing debt. This is not a sustainable approach."
+      },
+      {
+        text: "Use card for emergencies only and pay full balance",
+        impact: {
+          savings: 100,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 10,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Smart choice! Using credit cards only for emergencies and paying in full helps build good credit without accumulating debt."
+      },
+      {
+        text: "Use 30% of limit and pay full balance monthly",
+        impact: {
+          savings: 50,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          risk: -5,
+          xp: 40
+        },
+        feedback: "Good approach! Using less than 30% of your credit limit and paying in full shows responsible credit management."
+      }
+    ]
   }
 ]
 
