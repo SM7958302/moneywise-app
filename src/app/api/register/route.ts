@@ -1,59 +1,70 @@
 import { NextResponse } from "next/server"
+import { hash } from "bcryptjs"
 import { prisma } from "@/lib/prisma"
-import bcrypt from "bcryptjs"
 
 export async function POST(req: Request) {
   try {
     const { name, email, password } = await req.json()
 
+    // Validate input
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { message: "Missing required fields" },
         { status: 400 }
       )
     }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     })
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User already exists" },
+        { message: "User already exists" },
         { status: 400 }
       )
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await hash(password, 10)
 
-    // Create user
+    // Create user with initial progress records for first module
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
         progress: {
-          create: {} // Create empty progress record
+          create: [
+            {
+              moduleId: "basics",
+              lessonId: "what-is-money",
+              completed: false
+            },
+            {
+              moduleId: "basics",
+              lessonId: "banking-101",
+              completed: false
+            },
+            {
+              moduleId: "basics",
+              lessonId: "saving-basics",
+              completed: false
+            }
+          ]
         }
-      }
+      },
     })
 
     return NextResponse.json(
-      {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email
-        }
-      },
+      { message: "User created successfully" },
       { status: 201 }
     )
   } catch (error) {
     console.error("Registration error:", error)
     return NextResponse.json(
-      { error: "Error creating user" },
+      { message: "Error creating user" },
       { status: 500 }
     )
   }
