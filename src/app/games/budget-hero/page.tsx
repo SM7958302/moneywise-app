@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -24,19 +24,6 @@ export default function BudgetHeroGame() {
   const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
   const remaining = income - totalExpenses
 
-  useEffect(() => {
-    // Check for achievements
-    if (remaining >= income * 0.2) {
-      unlockAchievement("saving_star")
-      addXP(100)
-    }
-    
-    if (monthsCompleted >= 3) {
-      unlockAchievement("expense_master")
-      addXP(75)
-    }
-  }, [remaining, monthsCompleted, income, unlockAchievement, addXP])
-
   const handleExpenseChange = (category: string, value: string) => {
     const numValue = parseInt(value) || 0
     setExpenses(prev => ({
@@ -48,7 +35,8 @@ export default function BudgetHeroGame() {
   const handleNextMonth = () => {
     if (isGameComplete) return;
 
-    setMonthsCompleted(prev => prev + 1)
+    const newMonthsCompleted = monthsCompleted + 1
+    setMonthsCompleted(newMonthsCompleted)
     
     // Check if goals are met
     const goalsMet = currentScenario.goals.every(goal => {
@@ -59,6 +47,16 @@ export default function BudgetHeroGame() {
     })
 
     if (goalsMet && !progress.completedScenarios.includes(currentScenario.id)) {
+      // Award achievements based on performance
+      if (remaining >= income * 0.2) {
+        unlockAchievement("saving_star")
+      }
+      
+      if (newMonthsCompleted >= 3) {
+        unlockAchievement("expense_master")
+      }
+
+      // Award XP for completing the scenario
       addXP(200)
       completeScenario(currentScenario.id)
       
