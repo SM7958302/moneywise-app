@@ -152,32 +152,92 @@ export const scenarios = [
     id: "first_job",
     title: "First Job Challenge",
     description: "You just got your first job! Learn to manage your first paycheck",
-    initialMoney: 2000,
-    monthlyIncome: 3000,
-    expenses: [
-      { id: "rent", name: "Rent", min: 800, recommended: 1000 },
-      { id: "food", name: "Food", min: 200, recommended: 400 },
-      { id: "transport", name: "Transportation", min: 100, recommended: 150 }
-    ],
-    goals: [
-      { id: "emergency", description: "Save $1000 for emergency fund", amount: 1000 },
-      { id: "student_loan", description: "Pay $300 towards student loans", amount: 300 }
+    options: [
+      {
+        text: "Spend most of your paycheck on wants and save little",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          health: -10,
+          happiness: 10,
+          risk: 20,
+          xp: 20
+        },
+        feedback: "While it's tempting to spend on wants, saving less now means less financial security later."
+      },
+      {
+        text: "Follow the 50/30/20 rule strictly",
+        impact: {
+          savings: 600,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 5,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings."
+      },
+      {
+        text: "Save everything and spend nothing",
+        impact: {
+          savings: 900,
+          debt: 0,
+          income: 0,
+          health: -5,
+          happiness: -10,
+          risk: -5,
+          xp: 30
+        },
+        feedback: "While saving is important, completely avoiding spending can impact your well-being. Balance is key!"
+      }
     ]
   },
   {
     id: "college_budget",
     title: "College Budget Challenge",
     description: "Manage your money during college semester",
-    initialMoney: 1500,
-    monthlyIncome: 800,
-    expenses: [
-      { id: "books", name: "Textbooks", min: 200, recommended: 300 },
-      { id: "food", name: "Meal Plan", min: 300, recommended: 400 },
-      { id: "fun", name: "Entertainment", min: 0, recommended: 100 }
-    ],
-    goals: [
-      { id: "savings", description: "Save $500 for next semester", amount: 500 },
-      { id: "emergency", description: "Keep $200 for emergencies", amount: 200 }
+    options: [
+      {
+        text: "Buy all new textbooks and eat out frequently",
+        impact: {
+          savings: -800,
+          debt: 400,
+          income: 0,
+          health: -5,
+          happiness: 10,
+          risk: 15,
+          xp: 20
+        },
+        feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books and meal planning."
+      },
+      {
+        text: "Use library books and cook meals",
+        impact: {
+          savings: 400,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: -5,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health."
+      },
+      {
+        text: "Mix of new and used resources",
+        impact: {
+          savings: 200,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          risk: -5,
+          xp: 40
+        },
+        feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort."
+      }
     ]
   },
   {
