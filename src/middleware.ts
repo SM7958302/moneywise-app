@@ -1,9 +1,15 @@
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
-import { get } from '@vercel/edge-config'
+import { createClient } from '@vercel/edge-config'
 
 export default withAuth(
-  function middleware(req) {
+  async function middleware(req) {
+    // Handle /welcome route separately
+    if (req.nextUrl.pathname === '/welcome') {
+      const config = createClient(process.env.EDGE_CONFIG)
+      const greeting = await config.get('greeting')
+      return NextResponse.json(greeting)
+    }
     return NextResponse.next()
   },
   {
@@ -25,9 +31,4 @@ export const config = {
     "/api/chat/:path*",
     "/welcome"
   ]
-}
-
-export async function middleware() {
-  const greeting = await get('greeting')
-  return NextResponse.json(greeting)
 } 
