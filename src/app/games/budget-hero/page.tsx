@@ -4,84 +4,97 @@ import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { scenarios, type Scenario, type Difficulty } from "@/lib/game-data"
+import { scenarios, type Scenario, type Difficulty, type ScenarioOption } from "@/lib/game-data"
 import { useToast, Toast } from "@/components/ui/use-toast"
 
-export default function BudgetHero() {
+export default function BudgetHeroGame() {
   const [currentScenario, setCurrentScenario] = useState<Scenario | null>(null)
-  const [selectedOption, setSelectedOption] = useState<number | null>(null)
-  const [stats, setStats] = useState({
-    savings: 0,
+  const [selectedOption, setSelectedOption] = useState<ScenarioOption | null>(null)
+  const [timeLeft, setTimeLeft] = useState(30)
+  const [playerStats, setPlayerStats] = useState({
+    savings: 1000,
     debt: 0,
-    income: 0,
+    income: 2000,
     health: 100,
     happiness: 100,
     discipline: 100,
     risk: 0,
-    xp: 0
+    xp: 0,
+    level: 1
   })
-  const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<Difficulty>("easy")
   const [showDifficultySelector, setShowDifficultySelector] = useState(true)
+  const [gameOver, setGameOver] = useState(false)
   const { toast, toasts } = useToast()
 
   useEffect(() => {
-    if (!showDifficultySelector) {
+    if (!showDifficultySelector && !gameOver) {
       loadNextScenario()
     }
-  }, [difficulty, showDifficultySelector])
+  }, [showDifficultySelector, gameOver])
+
+  useEffect(() => {
+    if (!showDifficultySelector && !gameOver && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer)
+            handleTimeUp()
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
+
+      return () => clearInterval(timer)
+    }
+  }, [showDifficultySelector, gameOver, timeLeft])
+
+  const handleTimeUp = () => {
+    if (currentScenario) {
+      const randomOption = currentScenario.options[Math.floor(Math.random() * currentScenario.options.length)]
+      handleOptionSelect(randomOption)
+    }
+  }
 
   const loadNextScenario = () => {
-    const availableScenarios = scenarios.filter(s => s.difficulty === difficulty)
-    if (availableScenarios.length === 0) {
-      if (difficulty === "easy") {
-        setDifficulty("medium")
-      } else if (difficulty === "medium") {
-        setDifficulty("hard")
-      } else {
-        toast({
-          title: "Congratulations!",
-          description: "You've completed all scenarios!",
-          variant: "default"
-        })
-        setShowDifficultySelector(true)
-        return
-      }
+    const difficultyScenarios = scenarios.filter(s => s.difficulty === difficulty)
+    if (difficultyScenarios.length === 0) {
+      setGameOver(true)
       return
     }
 
-    const randomIndex = Math.floor(Math.random() * availableScenarios.length)
-    setCurrentScenario(availableScenarios[randomIndex])
+    const randomIndex = Math.floor(Math.random() * difficultyScenarios.length)
+    const nextScenario = difficultyScenarios[randomIndex]
+    setCurrentScenario(nextScenario)
     setSelectedOption(null)
+    setTimeLeft(30)
   }
 
-  const handleOptionSelect = (optionIndex: number) => {
-    if (selectedOption !== null) return // Prevent multiple selections
+  const handleOptionSelect = (option: ScenarioOption) => {
+    if (selectedOption) return // Prevent multiple selections
 
-    setSelectedOption(optionIndex)
-    const option = currentScenario?.options[optionIndex]
-    if (!option) return
+    setSelectedOption(option)
+    setTimeLeft(0) // Stop the timer
 
-    // Update stats based on the selected option
-    setStats(prev => ({
-      savings: Math.max(0, prev.savings + option.impact.savings),
-      debt: Math.max(0, prev.debt + option.impact.debt),
-      income: Math.max(0, prev.income + option.impact.income),
-      health: Math.max(0, Math.min(100, prev.health + (option.impact.health || 0))),
-      happiness: Math.max(0, Math.min(100, prev.happiness + (option.impact.happiness || 0))),
-      discipline: Math.max(0, Math.min(100, prev.discipline + (option.impact.discipline || 0))),
-      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk)),
-      xp: prev.xp + (option.isCorrect ? option.impact.xp * 2 : option.impact.xp)
-    }))
-
-    // Show feedback
-    toast({
-      title: option.isCorrect ? "Correct!" : "Not quite right",
-      description: option.feedback,
-      variant: option.isCorrect ? "default" : "destructive"
+    // Update player stats
+    setPlayerStats(prev => {
+      const newStats = {
+        ...prev,
+        savings: Math.max(0, prev.savings + option.impact.savings),
+        debt: Math.max(0, prev.debt + option.impact.debt),
+        income: Math.max(0, prev.income + option.impact.income),
+        health: Math.min(100, Math.max(0, prev.health + option.impact.health)),
+        happiness: Math.min(100, Math.max(0, prev.happiness + option.impact.happiness)),
+        discipline: Math.min(100, Math.max(0, prev.discipline + option.impact.discipline)),
+        risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
+        xp: prev.xp + option.impact.xp,
+        level: Math.floor(prev.xp / 1000) + 1
+      }
+      return newStats
     })
 
-    // Load next scenario after a delay
+    // Show feedback and move to next scenario after a delay
     setTimeout(() => {
       loadNextScenario()
     }, 2000)
@@ -98,17 +111,17 @@ export default function BudgetHero() {
   const handleDifficultySelect = (selectedDifficulty: Difficulty) => {
     setDifficulty(selectedDifficulty)
     setShowDifficultySelector(false)
-    setStats({
-      savings: 0,
+    setPlayerStats({
+      savings: 1000,
       debt: 0,
-      income: 0,
+      income: 2000,
       health: 100,
       happiness: 100,
       discipline: 100,
       risk: 0,
-      xp: 0
+      xp: 0,
+      level: 1
     })
-    setLevel(1)
   }
 
   if (showDifficultySelector) {
@@ -192,9 +205,9 @@ export default function BudgetHero() {
           {currentScenario.options.map((option, index) => (
             <Button
               key={index}
-              variant={selectedOption === index ? "default" : "outline"}
+              variant={selectedOption === option ? "default" : "outline"}
               className="w-full text-left justify-start"
-              onClick={() => handleOptionSelect(index)}
+              onClick={() => handleOptionSelect(option)}
               disabled={selectedOption !== null}
             >
               {option.text}
@@ -208,27 +221,27 @@ export default function BudgetHero() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600">Savings</p>
-                <Progress value={(stats.savings / 5000) * 100} className="h-2" />
+                <Progress value={(playerStats.savings / 5000) * 100} className="h-2" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Debt</p>
-                <Progress value={(stats.debt / 5000) * 100} className="h-2" />
+                <Progress value={(playerStats.debt / 5000) * 100} className="h-2" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Health</p>
-                <Progress value={stats.health} className="h-2" />
+                <Progress value={playerStats.health} className="h-2" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Happiness</p>
-                <Progress value={stats.happiness} className="h-2" />
+                <Progress value={playerStats.happiness} className="h-2" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Discipline</p>
-                <Progress value={stats.discipline} className="h-2" />
+                <Progress value={playerStats.discipline} className="h-2" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Risk</p>
-                <Progress value={stats.risk} className="h-2" />
+                <Progress value={playerStats.risk} className="h-2" />
               </div>
             </div>
           </div>
@@ -236,8 +249,8 @@ export default function BudgetHero() {
           <div>
             <h3 className="font-semibold mb-2">Progress</h3>
             <div className="flex items-center gap-4">
-              <Progress value={(stats.xp / (level * 100)) * 100} className="h-2 flex-1" />
-              <span className="text-sm font-medium">Level {level}</span>
+              <Progress value={(playerStats.xp / (playerStats.level * 100)) * 100} className="h-2 flex-1" />
+              <span className="text-sm font-medium">Level {playerStats.level}</span>
             </div>
           </div>
         </div>

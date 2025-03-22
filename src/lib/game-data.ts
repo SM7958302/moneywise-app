@@ -953,12 +953,342 @@ const hardScenarios: Scenario[] = [
   }
 ]
 
+// Market Master scenarios
+const marketMasterScenarios: Scenario[] = [
+  {
+    id: "stock_basics",
+    title: "Stock Market Basics",
+    description: "You're learning about stocks. What's the best way to start?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Research and invest in index funds",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 100,
+          health: 5,
+          happiness: 5,
+          discipline: 15,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Great choice! Index funds provide diversification and are a safer way to start investing.",
+        isCorrect: true
+      },
+      {
+        text: "Invest all money in a single stock",
+        impact: {
+          savings: 200,
+          debt: 0,
+          income: 50,
+          health: -5,
+          happiness: 5,
+          discipline: -10,
+          risk: 30,
+          xp: 20
+        },
+        feedback: "Investing in a single stock is risky. Diversification is key to managing risk.",
+        isCorrect: false
+      },
+      {
+        text: "Keep money in savings account only",
+        impact: {
+          savings: 100,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: -5,
+          xp: 10
+        },
+        feedback: "While safe, you might miss out on potential growth. Consider a balanced investment strategy.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "market_timing",
+    title: "Market Timing",
+    description: "The market is showing high volatility. What should you do?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Stay invested and maintain your strategy",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 200,
+          health: 10,
+          happiness: 5,
+          discipline: 20,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Smart decision! Time in the market is better than timing the market.",
+        isCorrect: true
+      },
+      {
+        text: "Sell everything and wait",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          health: -5,
+          happiness: -5,
+          discipline: -10,
+          risk: 20,
+          xp: 20
+        },
+        feedback: "Selling during volatility can lock in losses. Stay focused on your long-term goals.",
+        isCorrect: false
+      },
+      {
+        text: "Double down on investments",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 100,
+          health: -5,
+          happiness: 5,
+          discipline: -5,
+          risk: 40,
+          xp: 30
+        },
+        feedback: "While tempting, increasing risk during volatility can be dangerous.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "portfolio_management",
+    title: "Portfolio Management",
+    description: "Your portfolio needs rebalancing. What's the best approach?",
+    difficulty: "hard",
+    options: [
+      {
+        text: "Rebalance to target allocation",
+        impact: {
+          savings: 2000,
+          debt: 0,
+          income: 400,
+          health: 15,
+          happiness: 10,
+          discipline: 25,
+          risk: -20,
+          xp: 70
+        },
+        feedback: "Excellent! Regular rebalancing helps maintain your desired risk level.",
+        isCorrect: true
+      },
+      {
+        text: "Let winners run",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 200,
+          health: 5,
+          happiness: 5,
+          discipline: -10,
+          risk: 30,
+          xp: 30
+        },
+        feedback: "While tempting, letting winners run can lead to an unbalanced portfolio.",
+        isCorrect: false
+      },
+      {
+        text: "Sell everything and start fresh",
+        impact: {
+          savings: -1000,
+          debt: 0,
+          income: 0,
+          health: -10,
+          happiness: -10,
+          discipline: -20,
+          risk: 40,
+          xp: 15
+        },
+        feedback: "Starting fresh can be costly. Regular rebalancing is more effective.",
+        isCorrect: false
+      }
+    ]
+  }
+]
+
+// Savings Quest scenarios
+const savingsQuestScenarios: Scenario[] = [
+  {
+    id: "emergency_fund",
+    title: "Emergency Fund",
+    description: "You've received a bonus. How should you use it?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Add to emergency fund",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 0,
+          health: 15,
+          happiness: 10,
+          discipline: 20,
+          risk: -15,
+          xp: 50
+        },
+        feedback: "Smart choice! An emergency fund provides financial security.",
+        isCorrect: true
+      },
+      {
+        text: "Treat yourself to something nice",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 15,
+          discipline: -10,
+          risk: 10,
+          xp: 20
+        },
+        feedback: "While fun, prioritizing savings helps build long-term security.",
+        isCorrect: false
+      },
+      {
+        text: "Invest in stocks",
+        impact: {
+          savings: 200,
+          debt: 0,
+          income: 50,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: 20,
+          xp: 30
+        },
+        feedback: "While investing is good, an emergency fund should come first.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "retirement_planning",
+    title: "Retirement Planning",
+    description: "You're planning for retirement. What's the best strategy?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Start early and contribute regularly",
+        impact: {
+          savings: 2000,
+          debt: 0,
+          income: 300,
+          health: 15,
+          happiness: 15,
+          discipline: 25,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Perfect! Starting early and being consistent is key to retirement success.",
+        isCorrect: true
+      },
+      {
+        text: "Wait until you're older",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 50,
+          health: 5,
+          happiness: 5,
+          discipline: -10,
+          risk: 20,
+          xp: 20
+        },
+        feedback: "The earlier you start, the more time your money has to grow.",
+        isCorrect: false
+      },
+      {
+        text: "Save everything for retirement",
+        impact: {
+          savings: 1500,
+          debt: 0,
+          income: 200,
+          health: -5,
+          happiness: -5,
+          discipline: 15,
+          risk: -10,
+          xp: 30
+        },
+        feedback: "While saving is important, balance is key to financial well-being.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "tax_optimization",
+    title: "Tax Optimization",
+    description: "You're optimizing your savings for taxes. What's the best approach?",
+    difficulty: "hard",
+    options: [
+      {
+        text: "Maximize tax-advantaged accounts",
+        impact: {
+          savings: 3000,
+          debt: 0,
+          income: 500,
+          health: 15,
+          happiness: 15,
+          discipline: 30,
+          risk: -20,
+          xp: 70
+        },
+        feedback: "Excellent! Tax-advantaged accounts help your money grow faster.",
+        isCorrect: true
+      },
+      {
+        text: "Keep everything in regular savings",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 100,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: -5,
+          xp: 20
+        },
+        feedback: "You're missing out on tax benefits. Consider tax-advantaged accounts.",
+        isCorrect: false
+      },
+      {
+        text: "Invest only in stocks",
+        impact: {
+          savings: 1500,
+          debt: 0,
+          income: 200,
+          health: -5,
+          happiness: 5,
+          discipline: -5,
+          risk: 30,
+          xp: 30
+        },
+        feedback: "While stocks can be good, tax-advantaged accounts offer better long-term benefits.",
+        isCorrect: false
+      }
+    ]
+  }
+]
+
 // Combine all scenarios
-export const scenarios: Scenario[] = [
+const allScenarios: Scenario[] = [
   ...easyScenarios,
   ...mediumScenarios,
-  ...hardScenarios
+  ...hardScenarios,
+  ...marketMasterScenarios,
+  ...savingsQuestScenarios
 ]
+
+export const scenarios = allScenarios
 
 export const marketScenarios = [
   {
