@@ -4,7 +4,6 @@ import { Header } from "@/components/header"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
 
 const modules = [
   {
@@ -46,15 +45,13 @@ const modules = [
 ]
 
 export default function LearnPage() {
-  const [selectedTab, setSelectedTab] = useState("basics")
-
   return (
     <main className="min-h-screen bg-background">
       <Header />
       <div className="container py-8">
         <h1 className="text-4xl font-bold mb-8">Learning Modules</h1>
         
-        <Tabs defaultValue="basics" className="space-y-8" onValueChange={setSelectedTab}>
+        <Tabs defaultValue="basics" className="space-y-8">
           <TabsList>
             {modules.map((section) => (
               <TabsTrigger key={section.id} value={section.id}>
