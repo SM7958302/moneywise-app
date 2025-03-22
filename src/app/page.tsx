@@ -45,22 +45,7 @@ const tools = [
 ]
 
 export default function HomePage() {
-  const [greeting, setGreeting] = useState("")
-
-  useEffect(() => {
-    fetch("/welcome")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setGreeting(data.message)
-        } else {
-          setGreeting("Welcome to MoneyWise! Let's learn about finance together!")
-        }
-      })
-      .catch(() => {
-        setGreeting("Welcome to MoneyWise! Let's learn about finance together!")
-      })
-  }, [])
+  const [greeting] = useState("Welcome to MoneyWise! Let's learn about finance together!")
 
   return (
     <div className="min-h-screen bg-background">
