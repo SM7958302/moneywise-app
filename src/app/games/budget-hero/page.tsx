@@ -180,7 +180,7 @@ export default function BudgetHeroGame() {
           <CardContent className="space-y-4">
             <p className="text-lg">{currentScenario.description}</p>
             <div className="grid gap-4">
-              {currentScenario.options.map((option, index) => (
+              {currentScenario.options.map((option: ScenarioOption, index: number) => (
                 <Button
                   key={index}
                   variant="outline"
