@@ -9,7 +9,7 @@ import { scenarios } from "@/lib/game-data"
 import { AchievementsPanel } from "@/components/game/AchievementsPanel"
 
 export default function BudgetHeroGame() {
-  const { addXP, unlockAchievement, completeScenario } = useGame()
+  const { addXP, unlockAchievement, completeScenario, progress } = useGame()
   const [currentScenario, setCurrentScenario] = useState(scenarios[0])
   const [income, setIncome] = useState(currentScenario.monthlyIncome)
   const [expenses, setExpenses] = useState<Record<string, number>>(
@@ -19,6 +19,7 @@ export default function BudgetHeroGame() {
   )
   const [showTip, setShowTip] = useState(true)
   const [monthsCompleted, setMonthsCompleted] = useState(0)
+  const [isGameComplete, setIsGameComplete] = useState(false)
 
   const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
   const remaining = income - totalExpenses
@@ -45,6 +46,8 @@ export default function BudgetHeroGame() {
   }
 
   const handleNextMonth = () => {
+    if (isGameComplete) return;
+
     setMonthsCompleted(prev => prev + 1)
     
     // Check if goals are met
@@ -55,7 +58,7 @@ export default function BudgetHeroGame() {
       return expenses[goal.id] >= goal.amount
     })
 
-    if (goalsMet) {
+    if (goalsMet && !progress.completedScenarios.includes(currentScenario.id)) {
       addXP(200)
       completeScenario(currentScenario.id)
       
@@ -70,6 +73,8 @@ export default function BudgetHeroGame() {
           )
         )
         setMonthsCompleted(0)
+      } else {
+        setIsGameComplete(true)
       }
     }
   }
@@ -169,7 +174,12 @@ export default function BudgetHeroGame() {
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={handleNextMonth}>Complete Month</Button>
+            <Button 
+              onClick={handleNextMonth}
+              disabled={isGameComplete}
+            >
+              {isGameComplete ? "Game Complete!" : "Complete Month"}
+            </Button>
           </div>
         </motion.div>
 
