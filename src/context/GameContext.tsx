@@ -1,11 +1,11 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { levels, type GameProgress } from "@/lib/game-data"
+import { levels, type GameProgress, Scenario, scenarios } from "@/lib/game-data"
 
 interface GameContextType {
-  level: number
   xp: number
+  level: number
   xpToNextLevel: number
   addXP: (amount: number) => void
   unlockAchievement: (id: string) => void
@@ -14,28 +14,29 @@ interface GameContextType {
     completedScenarios: string[]
     unlockedAchievements: string[]
   }
+  completedScenarios: Scenario[]
+  scenarios: Scenario[]
+  setCompletedScenarios: React.Dispatch<React.SetStateAction<Scenario[]>>
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined)
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [level, setLevel] = useState(1)
   const [xp, setXp] = useState(0)
+  const [completedScenarios, setCompletedScenarios] = useState<Scenario[]>([])
+  const [gameScenarios] = useState<Scenario[]>(scenarios)
+  const level = Math.floor(xp / 1000) + 1
+  const xpToNextLevel = level * 1000
   const [progress, setProgress] = useState({
     completedScenarios: [] as string[],
     unlockedAchievements: [] as string[],
   })
 
-  const xpToNextLevel = level * 1000
-
   useEffect(() => {
-    const savedData = localStorage.getItem("gameProgress")
-    if (savedData) {
-      const { level: savedLevel, xp: savedXp, progress: savedProgress } = JSON.parse(savedData)
-      setLevel(savedLevel)
-      setXp(savedXp)
-      setProgress(savedProgress)
-    }
+    const savedXP = localStorage.getItem('xp')
+    const savedCompletedScenarios = localStorage.getItem('completedScenarios')
+    if (savedXP) setXp(parseInt(savedXP))
+    if (savedCompletedScenarios) setCompletedScenarios(JSON.parse(savedCompletedScenarios))
   }, [])
 
   useEffect(() => {
@@ -46,13 +47,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [level, xp, progress])
 
   const addXP = (amount: number) => {
-    setXp((prev) => {
-      const newXp = prev + amount
-      if (newXp >= xpToNextLevel) {
-        setLevel((prevLevel) => prevLevel + 1)
-        return newXp - xpToNextLevel
-      }
-      return newXp
+    setXp(prev => {
+      const newXP = prev + amount
+      localStorage.setItem('xp', newXP.toString())
+      return newXP
     })
   }
 
@@ -73,13 +71,16 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   return (
     <GameContext.Provider
       value={{
-        level,
         xp,
+        level,
         xpToNextLevel,
         addXP,
         unlockAchievement,
         completeScenario,
         progress,
+        completedScenarios,
+        scenarios: gameScenarios,
+        setCompletedScenarios
       }}
     >
       {children}

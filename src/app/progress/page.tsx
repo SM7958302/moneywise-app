@@ -28,19 +28,31 @@ const achievements = [
 ]
 
 export default function ProgressPage() {
-  const { progress, xp } = useGame()
+  const { progress, xp, completedScenarios, scenarios, setCompletedScenarios } = useGame()
 
   const stats = {
-    gamesCompleted: progress.completedScenarios.length,
+    gamesCompleted: completedScenarios.length,
     totalXP: xp,
     totalGames: achievements.length,
-    completionPercentage: (progress.completedScenarios.length / achievements.length) * 100
+    completionPercentage: (completedScenarios.length / achievements.length) * 100
   }
 
   const calculateProgress = (category: string) => {
-    const completed = progress.completedScenarios.filter(item => item === category).length
-    const total = achievements.filter(item => item.id === category).length
-    return Math.min(100, (completed / total) * 100)
+    const completed = completedScenarios.filter(s => s.category === category).length
+    const total = scenarios.filter(s => s.category === category).length
+    return total > 0 ? Math.min(100, (completed / total) * 100) : 0
+  }
+
+  const overallProgress = scenarios.length > 0 
+    ? Math.min(100, (completedScenarios.length / scenarios.length) * 100) 
+    : 0
+
+  const handleScenarioComplete = (scenarioId: string) => {
+    const scenario = scenarios.find(s => s.id === scenarioId)
+    if (scenario && !completedScenarios.some(s => s.id === scenarioId)) {
+      setCompletedScenarios(prev => [...prev, scenario])
+      localStorage.setItem('completedScenarios', JSON.stringify([...completedScenarios, scenario]))
+    }
   }
 
   return (
@@ -90,7 +102,7 @@ export default function ProgressPage() {
         <h2 className="text-2xl font-bold mb-4 text-foreground">Game Achievements</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {achievements.map((achievement) => {
-            const isCompleted = progress.completedScenarios.includes(achievement.id);
+            const isCompleted = completedScenarios.some(s => s.id === achievement.id);
             return (
               <Card key={achievement.id} className={cn("bg-card border-border", isCompleted ? "border-primary" : "")}>
                 <CardHeader>
