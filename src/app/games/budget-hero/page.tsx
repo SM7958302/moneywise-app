@@ -15,12 +15,17 @@ interface ScenarioOption {
     savings: number
     debt: number
     income: number
-    health: number
-    happiness: number
+    health?: number
+    happiness?: number
+    discipline?: number
     risk: number
     xp: number
   }
   feedback: string
+  miniGame?: {
+    type: "budget_planner" | "stock_picker" | "savings_challenge"
+    bonus: number
+  }
 }
 
 export default function BudgetHeroGame() {
@@ -63,8 +68,8 @@ export default function BudgetHeroGame() {
         savings: Math.max(0, prev.savings + option.impact.savings),
         debt: Math.max(0, prev.debt + option.impact.debt),
         income: Math.max(0, prev.income + option.impact.income),
-        health: Math.max(0, Math.min(100, prev.health + option.impact.health)),
-        happiness: Math.max(0, Math.min(100, prev.happiness + option.impact.happiness)),
+        health: Math.max(0, Math.min(100, prev.health + (option.impact.health ?? 0))),
+        happiness: Math.max(0, Math.min(100, prev.happiness + (option.impact.happiness ?? 0))),
         risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
       }))
 
