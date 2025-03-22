@@ -324,6 +324,112 @@ const easyScenarios: Scenario[] = [
         isCorrect: false
       }
     ]
+  },
+  {
+    id: "first_bank_account",
+    title: "First Bank Account",
+    description: "You're opening your first bank account. What type should you choose?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Savings account with high interest",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 50,
+          health: 5,
+          happiness: 5,
+          discipline: 15,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Great choice! A savings account helps you build an emergency fund and earn interest.",
+        isCorrect: true
+      },
+      {
+        text: "Checking account with no fees",
+        impact: {
+          savings: 200,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: -5,
+          xp: 30
+        },
+        feedback: "A checking account is good for daily expenses, but consider having both checking and savings accounts.",
+        isCorrect: false
+      },
+      {
+        text: "No bank account, keep cash at home",
+        impact: {
+          savings: -200,
+          debt: 0,
+          income: 0,
+          health: -5,
+          happiness: -5,
+          discipline: -10,
+          risk: 20,
+          xp: 10
+        },
+        feedback: "Keeping cash at home is risky and you miss out on interest earnings. A bank account is safer and more beneficial.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "grocery_shopping",
+    title: "Smart Grocery Shopping",
+    description: "You're going grocery shopping. How will you approach it?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Make a list and stick to it",
+        impact: {
+          savings: 300,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 5,
+          discipline: 15,
+          risk: -5,
+          xp: 45
+        },
+        feedback: "Smart shopping! Making a list helps you avoid impulse purchases and stick to your budget.",
+        isCorrect: true
+      },
+      {
+        text: "Buy whatever looks good",
+        impact: {
+          savings: -200,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 10,
+          discipline: -10,
+          risk: 10,
+          xp: 15
+        },
+        feedback: "Impulse buying can lead to overspending and food waste. Planning ahead is more cost-effective.",
+        isCorrect: false
+      },
+      {
+        text: "Buy only the cheapest items",
+        impact: {
+          savings: 400,
+          debt: 0,
+          income: 0,
+          health: -5,
+          happiness: -5,
+          discipline: 10,
+          risk: 5,
+          xp: 25
+        },
+        feedback: "While saving money is good, consider nutritional value too. Balance quality with cost.",
+        isCorrect: false
+      }
+    ]
   }
 ]
 
@@ -478,6 +584,112 @@ const mediumScenarios: Scenario[] = [
         isCorrect: false
       }
     ]
+  },
+  {
+    id: "car_purchase",
+    title: "Car Purchase Decision",
+    description: "You need a new car. What's your approach?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Buy a reliable used car with cash",
+        impact: {
+          savings: -5000,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 10,
+          discipline: 15,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Smart choice! Buying a used car with cash avoids interest payments and depreciation costs.",
+        isCorrect: true
+      },
+      {
+        text: "Take out a loan for a new car",
+        impact: {
+          savings: -2000,
+          debt: 15000,
+          income: 0,
+          health: 5,
+          happiness: 15,
+          discipline: -5,
+          risk: 20,
+          xp: 30
+        },
+        feedback: "New cars depreciate quickly. Consider the total cost including interest and insurance.",
+        isCorrect: false
+      },
+      {
+        text: "Lease a luxury car",
+        impact: {
+          savings: -1000,
+          debt: 5000,
+          income: 0,
+          health: 5,
+          happiness: 20,
+          discipline: -10,
+          risk: 30,
+          xp: 20
+        },
+        feedback: "Leasing can be expensive in the long run. Consider your long-term financial goals.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "student_loans",
+    title: "Student Loan Management",
+    description: "You have student loans. How will you handle them?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Create a repayment plan and stick to it",
+        impact: {
+          savings: -500,
+          debt: -1000,
+          income: 0,
+          health: 10,
+          happiness: 5,
+          discipline: 20,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Excellent approach! Having a plan helps you stay on track and pay off loans efficiently.",
+        isCorrect: true
+      },
+      {
+        text: "Pay minimum and invest the rest",
+        impact: {
+          savings: 500,
+          debt: -200,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: 15,
+          xp: 35
+        },
+        feedback: "While investing is important, high-interest debt should usually be prioritized.",
+        isCorrect: false
+      },
+      {
+        text: "Ignore the loans for now",
+        impact: {
+          savings: 0,
+          debt: 500,
+          income: 0,
+          health: -10,
+          happiness: -5,
+          discipline: -15,
+          risk: 30,
+          xp: 10
+        },
+        feedback: "Ignoring student loans can lead to increased debt and damaged credit. Take action early.",
+        isCorrect: false
+      }
+    ]
   }
 ]
 
@@ -629,6 +841,112 @@ const hardScenarios: Scenario[] = [
           xp: 10
         },
         feedback: "Ignoring tax planning can lead to missed opportunities and potential penalties. It's important to stay informed and organized.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "mortgage_decision",
+    title: "Mortgage Decision",
+    description: "You're buying a house. What mortgage terms should you choose?",
+    difficulty: "hard",
+    options: [
+      {
+        text: "15-year fixed rate with 20% down",
+        impact: {
+          savings: -20000,
+          debt: 200000,
+          income: 0,
+          health: 15,
+          happiness: 15,
+          discipline: 20,
+          risk: -15,
+          xp: 70
+        },
+        feedback: "Smart choice! A shorter term and larger down payment save you money in interest.",
+        isCorrect: true
+      },
+      {
+        text: "30-year adjustable rate with 5% down",
+        impact: {
+          savings: -5000,
+          debt: 285000,
+          income: 0,
+          health: 5,
+          happiness: 10,
+          discipline: 5,
+          risk: 30,
+          xp: 25
+        },
+        feedback: "Adjustable rates can be risky, and a small down payment means higher monthly payments.",
+        isCorrect: false
+      },
+      {
+        text: "Interest-only loan with minimum down",
+        impact: {
+          savings: -2000,
+          debt: 300000,
+          income: 0,
+          health: -5,
+          happiness: 5,
+          discipline: -10,
+          risk: 40,
+          xp: 15
+        },
+        feedback: "Interest-only loans are very risky and can lead to negative equity. Consider more traditional options.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "investment_portfolio",
+    title: "Investment Portfolio Management",
+    description: "You're managing a large investment portfolio. What's your strategy?",
+    difficulty: "hard",
+    options: [
+      {
+        text: "Diversify across asset classes and rebalance regularly",
+        impact: {
+          savings: 5000,
+          debt: 0,
+          income: 1000,
+          health: 10,
+          happiness: 10,
+          discipline: 15,
+          risk: -20,
+          xp: 70
+        },
+        feedback: "Excellent strategy! Diversification and regular rebalancing help manage risk and optimize returns.",
+        isCorrect: true
+      },
+      {
+        text: "Focus on high-risk, high-reward stocks",
+        impact: {
+          savings: 2000,
+          debt: 0,
+          income: 2000,
+          health: -5,
+          happiness: 5,
+          discipline: -5,
+          risk: 40,
+          xp: 30
+        },
+        feedback: "High-risk investments can be volatile. Consider a more balanced approach.",
+        isCorrect: false
+      },
+      {
+        text: "Keep everything in cash",
+        impact: {
+          savings: 1000,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          discipline: 5,
+          risk: -10,
+          xp: 20
+        },
+        feedback: "While cash is safe, you might miss out on potential growth. Consider a balanced investment strategy.",
         isCorrect: false
       }
     ]
