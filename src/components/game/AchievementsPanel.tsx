@@ -9,8 +9,7 @@ import { ShareButton } from "@/components/ui/share-button"
 import { achievements } from "@/lib/game-data"
 
 export function AchievementsPanel() {
-  const { progress, getCurrentLevel } = useGame()
-  const { title: levelTitle, progress: levelProgress } = getCurrentLevel()
+  const { progress, xp, level, xpToNextLevel } = useGame()
 
   const allAchievements = [
     ...achievements.budgeting,
@@ -34,15 +33,15 @@ export function AchievementsPanel() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <p className="text-lg font-medium">{levelTitle}</p>
+            <p className="text-lg font-medium">Level {level}</p>
             <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
               <div
                 className="h-full bg-blue-600 rounded-full transition-all"
-                style={{ width: `${levelProgress}%` }}
+                style={{ width: `${(xp / xpToNextLevel) * 100}%` }}
               />
             </div>
             <p className="text-sm text-muted-foreground mt-1">
-              {progress.xp} XP Total
+              {xp} / {xpToNextLevel} XP
             </p>
           </div>
         </CardContent>
@@ -52,20 +51,20 @@ export function AchievementsPanel() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Achievements</CardTitle>
-            {progress.achievements.length > 0 && (
+            {progress.unlockedAchievements.length > 0 && (
               <ShareButton
                 title="My MoneyWise Achievements!"
-                text={`I've earned ${progress.achievements.length} achievements and ${progress.xp} XP in MoneyWise! 🏆`}
+                text={`I've earned ${progress.unlockedAchievements.length} achievements and ${xp} XP in MoneyWise! 🏆`}
               />
             )}
           </div>
           <div className="text-sm text-muted-foreground">
-            {progress.achievements.length} earned
+            {progress.unlockedAchievements.length} earned
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {allAchievements.map(achievement => {
-            const isUnlocked = progress.achievements.includes(achievement.id)
+            const isUnlocked = progress.unlockedAchievements.includes(achievement.id)
             return (
               <Card 
                 key={achievement.id} 
