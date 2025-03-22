@@ -156,41 +156,41 @@ export const scenarios = [
       {
         text: "Spend most of your paycheck on wants and save little",
         impact: {
-          savings: -500,
-          debt: 0,
+          savings: -800,
+          debt: 200,
           income: 0,
-          health: -10,
-          happiness: 10,
-          risk: 20,
-          xp: 20
+          health: -15,
+          happiness: 15,
+          risk: 25,
+          xp: 15
         },
-        feedback: "While it's tempting to spend on wants, saving less now means less financial security later."
+        feedback: "While it's tempting to spend on wants, saving less now means less financial security later. Consider setting aside some money for emergencies."
       },
       {
         text: "Follow the 50/30/20 rule strictly",
         impact: {
-          savings: 600,
+          savings: 1000,
           debt: 0,
           income: 0,
-          health: 10,
-          happiness: 5,
-          risk: -10,
-          xp: 50
+          health: 15,
+          happiness: 10,
+          risk: -15,
+          xp: 60
         },
-        feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings."
+        feedback: "Excellent choice! Following the 50/30/20 rule helps you balance needs, wants, and savings. This is a sustainable approach to money management."
       },
       {
         text: "Save everything and spend nothing",
         impact: {
-          savings: 900,
+          savings: 1500,
           debt: 0,
           income: 0,
-          health: -5,
-          happiness: -10,
-          risk: -5,
-          xp: 30
+          health: -10,
+          happiness: -15,
+          risk: -10,
+          xp: 35
         },
-        feedback: "While saving is important, completely avoiding spending can impact your well-being. Balance is key!"
+        feedback: "While saving is important, completely avoiding spending can impact your well-being. Remember to find a balance between saving and enjoying life."
       }
     ]
   },
@@ -202,41 +202,41 @@ export const scenarios = [
       {
         text: "Buy all new textbooks and eat out frequently",
         impact: {
-          savings: -800,
-          debt: 400,
+          savings: -1200,
+          debt: 600,
           income: 0,
-          health: -5,
-          happiness: 10,
-          risk: 15,
-          xp: 20
+          health: -10,
+          happiness: 15,
+          risk: 20,
+          xp: 15
         },
-        feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books and meal planning."
+        feedback: "New textbooks and frequent dining out can quickly drain your budget. Consider alternatives like used books, meal planning, and student discounts."
       },
       {
         text: "Use library books and cook meals",
+        impact: {
+          savings: 800,
+          debt: 0,
+          income: 0,
+          health: 15,
+          happiness: -10,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health. This is a great way to build financial discipline."
+      },
+      {
+        text: "Mix of new and used resources",
         impact: {
           savings: 400,
           debt: 0,
           income: 0,
           health: 10,
-          happiness: -5,
-          risk: -10,
-          xp: 50
-        },
-        feedback: "Smart choices! Using library resources and cooking meals helps you save money while maintaining good health."
-      },
-      {
-        text: "Mix of new and used resources",
-        impact: {
-          savings: 200,
-          debt: 0,
-          income: 0,
-          health: 5,
-          happiness: 5,
+          happiness: 10,
           risk: -5,
-          xp: 40
+          xp: 45
         },
-        feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort."
+        feedback: "A balanced approach! Mixing new and used resources helps you save while maintaining comfort. This shows good decision-making skills."
       }
     ]
   },
@@ -248,41 +248,133 @@ export const scenarios = [
       {
         text: "Use the card for all purchases and pay minimum balance",
         impact: {
-          savings: -200,
-          debt: 800,
+          savings: -300,
+          debt: 1000,
           income: 0,
-          health: -10,
-          happiness: -10,
-          risk: 20,
-          xp: 20
+          health: -15,
+          happiness: -15,
+          risk: 25,
+          xp: 15
         },
-        feedback: "Using only minimum payments leads to high interest charges and growing debt. This is not a sustainable approach."
+        feedback: "Using only minimum payments leads to high interest charges and growing debt. This is not a sustainable approach and can damage your credit score."
       },
       {
         text: "Use card for emergencies only and pay full balance",
+        impact: {
+          savings: 200,
+          debt: 0,
+          income: 0,
+          health: 15,
+          happiness: 15,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Smart choice! Using credit cards only for emergencies and paying in full helps build good credit without accumulating debt. This is the ideal way to use credit cards."
+      },
+      {
+        text: "Use 30% of limit and pay full balance monthly",
         impact: {
           savings: 100,
           debt: 0,
           income: 0,
           health: 10,
           happiness: 10,
-          risk: -10,
-          xp: 50
+          risk: -5,
+          xp: 45
         },
-        feedback: "Smart choice! Using credit cards only for emergencies and paying in full helps build good credit without accumulating debt."
+        feedback: "Good approach! Using less than 30% of your credit limit and paying in full shows responsible credit management. This helps build a good credit score."
+      }
+    ]
+  },
+  {
+    id: "investment_opportunity",
+    title: "Investment Opportunity",
+    description: "You've saved some money and have an opportunity to invest. How will you approach this decision?",
+    options: [
+      {
+        text: "Invest everything in a high-risk stock",
+        impact: {
+          savings: -2000,
+          debt: 0,
+          income: 500,
+          health: -10,
+          happiness: 10,
+          risk: 30,
+          xp: 25
+        },
+        feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket."
       },
       {
-        text: "Use 30% of limit and pay full balance monthly",
+        text: "Create a diversified portfolio",
         impact: {
-          savings: 50,
+          savings: -1500,
           debt: 0,
-          income: 0,
+          income: 300,
+          health: 10,
+          happiness: 5,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing."
+      },
+      {
+        text: "Keep money in savings account only",
+        impact: {
+          savings: 100,
+          debt: 0,
+          income: 50,
           health: 5,
           happiness: 5,
           risk: -5,
-          xp: 40
+          xp: 35
         },
-        feedback: "Good approach! Using less than 30% of your credit limit and paying in full shows responsible credit management."
+        feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions."
+      }
+    ]
+  },
+  {
+    id: "emergency_fund",
+    title: "Emergency Fund Challenge",
+    description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
+    options: [
+      {
+        text: "Use emergency fund and stop saving",
+        impact: {
+          savings: -1000,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 5,
+          risk: 20,
+          xp: 25
+        },
+        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses."
+      },
+      {
+        text: "Use emergency fund and increase savings",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          health: 15,
+          happiness: 10,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline."
+      },
+      {
+        text: "Take on debt instead of using emergency fund",
+        impact: {
+          savings: 0,
+          debt: 1000,
+          income: 0,
+          health: -10,
+          happiness: -10,
+          risk: 25,
+          xp: 15
+        },
+        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations."
       }
     ]
   }
