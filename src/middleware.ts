@@ -1,11 +1,23 @@
 import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
 
-export default withAuth({
-  pages: {
-    signIn: "/login",
+export default withAuth(
+  function middleware(req) {
+    return NextResponse.next()
   },
-})
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token
+    },
+  }
+)
 
 export const config = {
-  matcher: ["/learn/:path*", "/games/:path*", "/tools/:path*", "/progress/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/learn/:path*",
+    "/profile/:path*",
+    "/api/user/:path*",
+    "/api/progress/:path*"
+  ]
 } 

@@ -32,10 +32,12 @@ declare module "next-auth/jwt" {
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
     signIn: "/login",
+    error: "/login", // Error code passed in query string as ?error=
   },
   providers: [
     CredentialsProvider({
@@ -46,7 +48,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error("Missing credentials")
         }
 
         const user = await prisma.user.findUnique({
@@ -56,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!user || !user.password) {
-          return null
+          throw new Error("Invalid credentials")
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -65,7 +67,7 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) {
-          return null
+          throw new Error("Invalid credentials")
         }
 
         return {
@@ -85,7 +87,6 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string | null
         session.user.image = token.picture as string | null
       }
-
       return session
     },
     async jwt({ token, user }) {
@@ -95,8 +96,9 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email
         token.picture = user.image
       }
-
       return token
     }
-  }
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 } 
