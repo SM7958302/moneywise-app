@@ -81,15 +81,18 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getCurrentLevel = () => {
-    const currentLevel = levels[progress.level - 1]
-    const nextLevel = levels[progress.level]
+    const currentLevelIndex = progress.level - 1
+    const currentLevel = levels[currentLevelIndex]
+    const nextLevelIndex = currentLevelIndex + 1
+    const nextLevel = nextLevelIndex < levels.length ? levels[nextLevelIndex] : null
+    
     const xpForCurrentLevel = progress.xp - currentLevel.xpNeeded
     const xpNeededForNextLevel = nextLevel ? nextLevel.xpNeeded - currentLevel.xpNeeded : 0
-    const progress = xpNeededForNextLevel ? (xpForCurrentLevel / xpNeededForNextLevel) * 100 : 100
+    const progressPercent = xpNeededForNextLevel ? (xpForCurrentLevel / xpNeededForNextLevel) * 100 : 100
 
     return {
       title: currentLevel.title,
-      progress
+      progress: progressPercent
     }
   }
 
