@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2 } from "lucide-react"
 
 const currencies = [
   { code: "USD", name: "US Dollar" },
@@ -21,66 +20,76 @@ const currencies = [
 ]
 
 export function CurrencyConverter() {
-  const [amount, setAmount] = useState("1")
+  const [amount, setAmount] = useState<string>("")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
-  const [result, setResult] = useState<number | null>(null)
+  const [rates, setRates] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const convertCurrency = async () => {
+  useEffect(() => {
+    fetchRates()
+  }, [])
+
+  const fetchRates = async () => {
     try {
       setLoading(true)
       setError(null)
-      
-      const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
+      const response = await fetch("https://api.exchangerate-api.com/v4/latest/USD")
       const data = await response.json()
-      
-      if (!data.rates) {
-        throw new Error("Failed to fetch exchange rates")
-      }
-
-      const rate = data.rates[toCurrency]
-      const convertedAmount = parseFloat(amount) * rate
-      setResult(convertedAmount)
+      setRates(data.rates)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to convert currency")
+      setError("Failed to fetch exchange rates. Please try again later.")
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    if (amount && fromCurrency && toCurrency) {
-      convertCurrency()
+  const handleAmountChange = (value: string) => {
+    // Only allow positive numbers with up to 2 decimal places
+    const sanitizedValue = value.replace(/[^0-9.]/g, "")
+    if (sanitizedValue === "" || /^\d*\.?\d{0,2}$/.test(sanitizedValue)) {
+      setAmount(sanitizedValue)
     }
-  }, [amount, fromCurrency, toCurrency])
+  }
+
+  const convertCurrency = () => {
+    if (!amount || isNaN(Number(amount))) return 0
+
+    const numericAmount = Number(amount)
+    if (numericAmount <= 0 || !isFinite(numericAmount)) return 0
+
+    const fromRate = rates[fromCurrency] || 1
+    const toRate = rates[toCurrency] || 1
+    const result = (numericAmount / fromRate) * toRate
+
+    // Format the result with 2 decimal places and prevent scientific notation
+    return result.toFixed(2)
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Currency Converter</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <Card className="p-6">
+      <h2 className="text-2xl font-bold mb-6">Currency Converter</h2>
+      
+      <div className="space-y-4">
         <div className="grid gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Amount</label>
+          <div>
+            <label className="block text-sm font-medium mb-2">Amount</label>
             <Input
-              type="number"
+              type="text"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              min="0"
-              step="0.01"
+              onChange={(e) => handleAmountChange(e.target.value)}
               placeholder="Enter amount"
+              className="w-full"
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">From</label>
+            <div>
+              <label className="block text-sm font-medium mb-2">From</label>
               <Select value={fromCurrency} onValueChange={setFromCurrency}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {currencies.map((currency) => (
@@ -91,12 +100,12 @@ export function CurrencyConverter() {
                 </SelectContent>
               </Select>
             </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">To</label>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">To</label>
               <Select value={toCurrency} onValueChange={setToCurrency}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {currencies.map((currency) => (
@@ -111,27 +120,26 @@ export function CurrencyConverter() {
         </div>
 
         {loading && (
-          <div className="flex items-center justify-center py-4">
-            <Loader2 className="h-6 w-6 animate-spin" />
+          <div className="text-center py-4">
+            <p className="text-gray-600">Loading exchange rates...</p>
           </div>
         )}
 
         {error && (
-          <div className="text-red-500 text-sm">{error}</div>
+          <div className="text-center py-4">
+            <p className="text-red-500">{error}</p>
+          </div>
         )}
 
-        {result !== null && !loading && !error && (
-          <div className="text-center py-4">
+        {!loading && !error && amount && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">Converted Amount:</p>
             <p className="text-2xl font-bold">
-              {parseFloat(amount).toFixed(2)} {fromCurrency} ={" "}
-              {result.toFixed(2)} {toCurrency}
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Last updated: {new Date().toLocaleString()}
+              {convertCurrency()} {toCurrency}
             </p>
           </div>
         )}
-      </CardContent>
+      </div>
     </Card>
   )
 } 

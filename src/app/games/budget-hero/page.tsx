@@ -22,11 +22,14 @@ export default function BudgetHero() {
   })
   const [level, setLevel] = useState(1)
   const [difficulty, setDifficulty] = useState<Difficulty>("easy")
+  const [showDifficultySelector, setShowDifficultySelector] = useState(true)
   const { toast, toasts } = useToast()
 
   useEffect(() => {
-    loadNextScenario()
-  }, [difficulty])
+    if (!showDifficultySelector) {
+      loadNextScenario()
+    }
+  }, [difficulty, showDifficultySelector])
 
   const loadNextScenario = () => {
     const availableScenarios = scenarios.filter(s => s.difficulty === difficulty)
@@ -41,6 +44,7 @@ export default function BudgetHero() {
           description: "You've completed all scenarios!",
           variant: "default"
         })
+        setShowDifficultySelector(true)
         return
       }
       return
@@ -60,9 +64,9 @@ export default function BudgetHero() {
 
     // Update stats based on the selected option
     setStats(prev => ({
-      savings: prev.savings + option.impact.savings,
-      debt: prev.debt + option.impact.debt,
-      income: prev.income + option.impact.income,
+      savings: Math.max(0, prev.savings + option.impact.savings),
+      debt: Math.max(0, prev.debt + option.impact.debt),
+      income: Math.max(0, prev.income + option.impact.income),
       health: Math.max(0, Math.min(100, prev.health + (option.impact.health || 0))),
       happiness: Math.max(0, Math.min(100, prev.happiness + (option.impact.happiness || 0))),
       discipline: Math.max(0, Math.min(100, prev.discipline + (option.impact.discipline || 0))),
@@ -91,6 +95,65 @@ export default function BudgetHero() {
     }
   }
 
+  const handleDifficultySelect = (selectedDifficulty: Difficulty) => {
+    setDifficulty(selectedDifficulty)
+    setShowDifficultySelector(false)
+    setStats({
+      savings: 0,
+      debt: 0,
+      income: 0,
+      health: 100,
+      happiness: 100,
+      discipline: 100,
+      risk: 0,
+      xp: 0
+    })
+    setLevel(1)
+  }
+
+  if (showDifficultySelector) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="p-6">
+          <h1 className="text-2xl font-bold mb-4">Select Difficulty</h1>
+          <p className="text-gray-600 mb-6">Choose your difficulty level to start the game:</p>
+          <div className="grid gap-4">
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("easy")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-green-500">Easy</span>
+                <span className="text-sm text-gray-500">Basic financial concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("medium")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-yellow-500">Medium</span>
+                <span className="text-sm text-gray-500">Intermediate financial concepts</span>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full text-left justify-start"
+              onClick={() => handleDifficultySelect("hard")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-red-500">Hard</span>
+                <span className="text-sm text-gray-500">Advanced financial concepts</span>
+              </div>
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
+
   if (!currentScenario) {
     return (
       <div className="container mx-auto p-4">
@@ -106,9 +169,18 @@ export default function BudgetHero() {
       <Card className="p-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Budget Hero</h1>
-          <span className={`font-semibold ${getDifficultyColor(difficulty)}`}>
-            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className={`font-semibold ${getDifficultyColor(difficulty)}`}>
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDifficultySelector(true)}
+            >
+              Change Difficulty
+            </Button>
+          </div>
         </div>
 
         <div className="mb-6">

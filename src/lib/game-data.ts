@@ -173,7 +173,8 @@ export interface ScenarioOption {
   isCorrect: boolean
 }
 
-export const scenarios: Scenario[] = [
+// Easy scenarios (basic financial concepts)
+const easyScenarios: Scenario[] = [
   {
     id: "first_job",
     title: "First Job Challenge",
@@ -225,6 +226,110 @@ export const scenarios: Scenario[] = [
     ]
   },
   {
+    id: "savings_goal",
+    title: "Setting a Savings Goal",
+    description: "You want to save for a new laptop. How will you approach this?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Save a fixed amount each month",
+        impact: {
+          savings: 500,
+          debt: 0,
+          income: 0,
+          discipline: 20,
+          happiness: 10,
+          risk: -10,
+          xp: 50
+        },
+        feedback: "Great choice! Setting a fixed monthly savings amount helps you build a consistent saving habit.",
+        isCorrect: true
+      },
+      {
+        text: "Save whatever is left at the end of the month",
+        impact: {
+          savings: 100,
+          debt: 0,
+          income: 0,
+          discipline: -10,
+          happiness: 0,
+          risk: 10,
+          xp: 20
+        },
+        feedback: "This approach often leads to inconsistent savings. It's better to save first and spend what's left.",
+        isCorrect: false
+      },
+      {
+        text: "Take out a loan to buy it immediately",
+        impact: {
+          savings: 0,
+          debt: 1000,
+          income: 0,
+          discipline: -20,
+          happiness: 15,
+          risk: 25,
+          xp: 10
+        },
+        feedback: "Taking on debt for non-essential items can lead to financial stress. Consider saving up instead.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "budget_basics",
+    title: "Budget Basics",
+    description: "You're creating your first budget. What's the best approach?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Track all expenses for a month first",
+        impact: {
+          savings: 0,
+          debt: 0,
+          income: 0,
+          discipline: 15,
+          happiness: 5,
+          risk: -5,
+          xp: 40
+        },
+        feedback: "Smart approach! Understanding your spending patterns helps create a realistic budget.",
+        isCorrect: true
+      },
+      {
+        text: "Guess your expenses and create a budget",
+        impact: {
+          savings: -200,
+          debt: 100,
+          income: 0,
+          discipline: -10,
+          happiness: 0,
+          risk: 15,
+          xp: 15
+        },
+        feedback: "Guessing expenses often leads to overspending. Track your actual spending for better accuracy.",
+        isCorrect: false
+      },
+      {
+        text: "Don't create a budget and spend freely",
+        impact: {
+          savings: -500,
+          debt: 300,
+          income: 0,
+          discipline: -20,
+          happiness: 10,
+          risk: 30,
+          xp: 10
+        },
+        feedback: "Without a budget, it's easy to overspend and lose track of your finances.",
+        isCorrect: false
+      }
+    ]
+  }
+]
+
+// Medium scenarios (intermediate financial concepts)
+const mediumScenarios: Scenario[] = [
+  {
     id: "college_budget",
     title: "College Budget Challenge",
     description: "Manage your money during college semester",
@@ -274,6 +379,110 @@ export const scenarios: Scenario[] = [
       }
     ]
   },
+  {
+    id: "emergency_fund",
+    title: "Emergency Fund Challenge",
+    description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Use emergency fund and stop saving",
+        impact: {
+          savings: -1000,
+          debt: 0,
+          income: 0,
+          health: 10,
+          happiness: 5,
+          risk: 15,
+          xp: 25
+        },
+        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
+        isCorrect: false
+      },
+      {
+        text: "Use emergency fund and rebuild it",
+        impact: {
+          savings: -500,
+          debt: 0,
+          income: 0,
+          health: 15,
+          happiness: 10,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
+        isCorrect: true
+      },
+      {
+        text: "Take on debt instead",
+        impact: {
+          savings: 0,
+          debt: 1000,
+          income: 0,
+          health: -10,
+          happiness: -5,
+          risk: 25,
+          xp: 15
+        },
+        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
+        isCorrect: false
+      }
+    ]
+  },
+  {
+    id: "investment_basics",
+    title: "Investment Basics",
+    description: "You've saved some money and want to start investing. What's your approach?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Invest all in one high-risk stock",
+        impact: {
+          savings: -5000,
+          debt: 0,
+          income: 0,
+          health: -10,
+          happiness: 5,
+          risk: 40,
+          xp: 25
+        },
+        feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket.",
+        isCorrect: false
+      },
+      {
+        text: "Create a diversified portfolio",
+        impact: {
+          savings: -5000,
+          debt: 0,
+          income: 100,
+          health: 10,
+          happiness: 10,
+          risk: -15,
+          xp: 60
+        },
+        feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing.",
+        isCorrect: true
+      },
+      {
+        text: "Keep all money in savings",
+        impact: {
+          savings: 5000,
+          debt: 0,
+          income: 0,
+          health: 5,
+          happiness: 5,
+          risk: -10,
+          xp: 35
+        },
+        feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions.",
+        isCorrect: false
+      }
+    ]
+  }
+]
+
+// Hard scenarios (advanced financial concepts)
+const hardScenarios: Scenario[] = [
   {
     id: "credit_card",
     title: "Credit Card Management",
@@ -325,105 +534,112 @@ export const scenarios: Scenario[] = [
     ]
   },
   {
-    id: "investment_opportunity",
-    title: "Investment Opportunity",
-    description: "You've saved some money and have an opportunity to invest. How will you approach this decision?",
-    difficulty: "medium",
+    id: "retirement_planning",
+    title: "Retirement Planning",
+    description: "You're planning for retirement. What's your strategy?",
+    difficulty: "hard",
     options: [
       {
-        text: "Invest everything in a high-risk stock",
+        text: "Start saving 15% of income in retirement accounts",
         impact: {
-          savings: -2000,
+          savings: 1000,
           debt: 0,
-          income: 500,
-          health: -10,
+          income: 0,
+          health: 15,
           happiness: 10,
-          risk: 30,
-          xp: 25
-        },
-        feedback: "High-risk investments can lead to high returns, but they're also very volatile. It's important to diversify your investments and not put all your eggs in one basket.",
-        isCorrect: false
-      },
-      {
-        text: "Create a diversified portfolio",
-        impact: {
-          savings: -1500,
-          debt: 0,
-          income: 300,
-          health: 10,
-          happiness: 5,
-          risk: -10,
+          risk: -15,
           xp: 60
         },
-        feedback: "Excellent choice! A diversified portfolio helps spread risk and is a more sustainable approach to investing. This is a key principle of smart investing.",
+        feedback: "Excellent choice! Starting early and saving consistently is key to building a secure retirement fund.",
         isCorrect: true
       },
       {
-        text: "Keep money in savings account only",
+        text: "Wait until you're older to start saving",
         impact: {
-          savings: 100,
+          savings: 0,
           debt: 0,
-          income: 50,
-          health: 5,
-          happiness: 5,
-          risk: -5,
-          xp: 35
+          income: 0,
+          health: -10,
+          happiness: 0,
+          risk: 30,
+          xp: 15
         },
-        feedback: "While keeping money in savings is safe, you might miss out on potential growth. Consider learning more about different investment options to make informed decisions.",
+        feedback: "Waiting to save for retirement means you'll need to save much more later to catch up. Time is your greatest ally in retirement planning.",
+        isCorrect: false
+      },
+      {
+        text: "Rely on social security only",
+        impact: {
+          savings: 0,
+          debt: 0,
+          income: 0,
+          health: -15,
+          happiness: -10,
+          risk: 40,
+          xp: 10
+        },
+        feedback: "Social security alone may not be enough for a comfortable retirement. It's important to have additional savings and investments.",
         isCorrect: false
       }
     ]
   },
   {
-    id: "emergency_fund",
-    title: "Emergency Fund Challenge",
-    description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
-    difficulty: "medium",
+    id: "tax_planning",
+    title: "Tax Planning",
+    description: "You're preparing for tax season. How will you approach it?",
+    difficulty: "hard",
     options: [
       {
-        text: "Use emergency fund and stop saving",
+        text: "Plan deductions throughout the year",
         impact: {
-          savings: -1000,
+          savings: 1000,
           debt: 0,
           income: 0,
           health: 10,
-          happiness: 5,
-          risk: 20,
-          xp: 25
-        },
-        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
-        isCorrect: false
-      },
-      {
-        text: "Use emergency fund and increase savings",
-        impact: {
-          savings: -500,
-          debt: 0,
-          income: 0,
-          health: 15,
           happiness: 10,
           risk: -10,
           xp: 60
         },
-        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
+        feedback: "Smart approach! Planning deductions throughout the year helps you maximize tax savings and avoid last-minute stress.",
         isCorrect: true
       },
       {
-        text: "Take on debt instead of using emergency fund",
+        text: "Wait until tax season to organize",
         impact: {
-          savings: 0,
-          debt: 1000,
+          savings: -500,
+          debt: 0,
           income: 0,
-          health: -10,
+          health: -15,
           happiness: -10,
-          risk: 25,
-          xp: 15
+          risk: 20,
+          xp: 20
         },
-        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
+        feedback: "Waiting until tax season can lead to missed deductions and increased stress. It's better to stay organized throughout the year.",
+        isCorrect: false
+      },
+      {
+        text: "Ignore tax planning completely",
+        impact: {
+          savings: -1000,
+          debt: 0,
+          income: 0,
+          health: -20,
+          happiness: -15,
+          risk: 40,
+          xp: 10
+        },
+        feedback: "Ignoring tax planning can lead to missed opportunities and potential penalties. It's important to stay informed and organized.",
         isCorrect: false
       }
     ]
   }
+]
+
+// Combine all scenarios
+export const scenarios: Scenario[] = [
+  ...easyScenarios,
+  ...mediumScenarios,
+  ...hardScenarios
 ]
 
 export const marketScenarios = [
