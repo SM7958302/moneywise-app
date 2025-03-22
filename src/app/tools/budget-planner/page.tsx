@@ -5,16 +5,22 @@ import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-export default function BudgetHeroGame() {
+const categories = [
+  "Housing",
+  "Transportation",
+  "Food",
+  "Utilities",
+  "Healthcare",
+  "Entertainment",
+  "Shopping",
+  "Savings"
+]
+
+export default function BudgetPlanner() {
   const [income, setIncome] = useState(5000)
-  const [expenses, setExpenses] = useState({
-    housing: 1500,
-    food: 500,
-    transportation: 300,
-    utilities: 200,
-    entertainment: 200,
-    savings: 0
-  })
+  const [expenses, setExpenses] = useState<Record<string, number>>(
+    Object.fromEntries(categories.map(cat => [cat, 0]))
+  )
 
   const totalExpenses = Object.values(expenses).reduce((a, b) => a + b, 0)
   const remaining = income - totalExpenses
@@ -27,6 +33,27 @@ export default function BudgetHeroGame() {
     }))
   }
 
+  const getRecommendation = () => {
+    const housingPercent = (expenses.Housing / income) * 100
+    const savingsPercent = (expenses.Savings / income) * 100
+    
+    let recommendations = []
+    
+    if (housingPercent > 30) {
+      recommendations.push("Your housing costs are above 30% of your income. Consider finding ways to reduce this expense.")
+    }
+    
+    if (savingsPercent < 20) {
+      recommendations.push("Try to save at least 20% of your income for long-term financial security.")
+    }
+    
+    if (remaining < 0) {
+      recommendations.push("You're spending more than you earn. Review your expenses and find areas to cut back.")
+    }
+    
+    return recommendations.length > 0 ? recommendations : ["Your budget looks healthy! Keep up the good work!"]
+  }
+
   return (
     <div className="min-h-screen bg-background p-8">
       <motion.div
@@ -35,8 +62,8 @@ export default function BudgetHeroGame() {
         className="max-w-4xl mx-auto space-y-8"
       >
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Budget Hero</h1>
-          <p className="text-muted-foreground">Master your budgeting skills!</p>
+          <h1 className="text-4xl font-bold mb-4">Budget Planner</h1>
+          <p className="text-muted-foreground">Plan and track your monthly expenses</p>
         </div>
 
         <Card className="mb-8">
@@ -54,15 +81,15 @@ export default function BudgetHeroGame() {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.entries(expenses).map(([category, amount]) => (
+          {categories.map(category => (
             <Card key={category}>
               <CardHeader>
-                <CardTitle className="capitalize">{category}</CardTitle>
+                <CardTitle>{category}</CardTitle>
               </CardHeader>
               <CardContent>
                 <input
                   type="number"
-                  value={amount}
+                  value={expenses[category]}
                   onChange={(e) => handleExpenseChange(category, e.target.value)}
                   className="w-full p-2 border rounded"
                 />
@@ -80,25 +107,24 @@ export default function BudgetHeroGame() {
               <p>Total Income: ${income}</p>
               <p>Total Expenses: ${totalExpenses}</p>
               <p className={remaining >= 0 ? "text-green-600" : "text-red-600"}>
-                {remaining >= 0 ? "Savings" : "Deficit"}: ${Math.abs(remaining)}
+                {remaining >= 0 ? "Remaining" : "Deficit"}: ${Math.abs(remaining)}
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <div className="text-center">
-          <Button
-            onClick={() => {
-              if (remaining >= 0) {
-                alert("Great job! You're managing your budget well!")
-              } else {
-                alert("Try to reduce expenses to avoid a deficit!")
-              }
-            }}
-          >
-            Check Budget Health
-          </Button>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Recommendations</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-disc pl-4 space-y-2">
+              {getRecommendation().map((rec, index) => (
+                <li key={index}>{rec}</li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       </motion.div>
     </div>
   )
