@@ -32,11 +32,21 @@ const features = [
 
 export default function HomePage() {
   const [greeting, setGreeting] = useState("")
+  const [error, setError] = useState("")
 
   useEffect(() => {
     fetch("/welcome")
       .then(res => res.json())
-      .then(data => setGreeting(data))
+      .then(data => {
+        if (data.success) {
+          setGreeting(data.message)
+        } else {
+          setGreeting("Welcome to MoneyWise! Let's learn about finance together!")
+        }
+      })
+      .catch(() => {
+        setGreeting("Welcome to MoneyWise! Let's learn about finance together!")
+      })
   }, [])
 
   return (
@@ -51,7 +61,7 @@ export default function HomePage() {
           MoneyWise
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-          {greeting || "Welcome to MoneyWise! Let's learn about finance together!"}
+          {greeting}
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
           <Link
