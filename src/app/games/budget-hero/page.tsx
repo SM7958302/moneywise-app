@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useGame } from "@/context/GameContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,6 +24,16 @@ interface ScenarioOption {
   feedback: string
 }
 
+interface GameHistory {
+  savings: number
+  debt: number
+  income: number
+  health: number
+  happiness: number
+  risk: number
+  timestamp: number
+}
+
 export default function BudgetHeroGame() {
   const { addXP, level, xp, xpToNextLevel, completeScenario } = useGame()
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
@@ -36,6 +46,10 @@ export default function BudgetHeroGame() {
     happiness: 100,
     risk: 0
   })
+  const [gameHistory, setGameHistory] = useState<GameHistory[]>([{
+    ...gameState,
+    timestamp: Date.now()
+  }])
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedback, setFeedback] = useState("")
   const [gameComplete, setGameComplete] = useState(false)
@@ -45,15 +59,18 @@ export default function BudgetHeroGame() {
 
   const handleChoice = (option: ScenarioOption) => {
     // Update game state based on choice impact
-    setGameState(prev => ({
-      savings: Math.max(0, prev.savings + option.impact.savings),
-      debt: Math.max(0, prev.debt + option.impact.debt),
-      income: Math.max(0, prev.income + option.impact.income),
-      expenses: Math.max(0, prev.expenses),
-      health: Math.max(0, Math.min(100, prev.health + option.impact.health)),
-      happiness: Math.max(0, Math.min(100, prev.happiness + option.impact.happiness)),
-      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
-    }))
+    const newState = {
+      savings: Math.max(0, gameState.savings + option.impact.savings),
+      debt: Math.max(0, gameState.debt + option.impact.debt),
+      income: Math.max(0, gameState.income + option.impact.income),
+      expenses: Math.max(0, gameState.expenses),
+      health: Math.max(0, Math.min(100, gameState.health + option.impact.health)),
+      happiness: Math.max(0, Math.min(100, gameState.happiness + option.impact.happiness)),
+      risk: Math.max(0, Math.min(100, gameState.risk + option.impact.risk))
+    }
+
+    setGameState(newState)
+    setGameHistory(prev => [...prev, { ...newState, timestamp: Date.now() }])
 
     // Add XP and complete scenario
     addXP(option.impact.xp)
@@ -76,7 +93,7 @@ export default function BudgetHeroGame() {
 
   const resetGame = () => {
     setCurrentScenarioIndex(0)
-    setGameState({
+    const initialState = {
       savings: 1000,
       debt: 0,
       income: 3000,
@@ -84,7 +101,9 @@ export default function BudgetHeroGame() {
       health: 100,
       happiness: 100,
       risk: 0
-    })
+    }
+    setGameState(initialState)
+    setGameHistory([{ ...initialState, timestamp: Date.now() }])
     setShowFeedback(false)
     setGameComplete(false)
   }
@@ -101,13 +120,22 @@ export default function BudgetHeroGame() {
           <p className="text-muted-foreground">
             Make smart financial decisions and learn about money management
           </p>
+          <div className="flex items-center justify-center gap-4 mt-4">
+            <div className="text-sm">
+              Level {level} • {xp}/{xpToNextLevel} XP
+            </div>
+            <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
+          </div>
         </div>
 
-        <FinancialCharts {...gameState} />
+        <FinancialCharts {...gameState} gameHistory={gameHistory} />
 
         <Card>
           <CardHeader>
             <CardTitle>{currentScenario.title}</CardTitle>
+            <div className="text-sm text-muted-foreground">
+              Scenario {currentScenarioIndex + 1} of {scenarios.length}
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-lg">{currentScenario.description}</p>

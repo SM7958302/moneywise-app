@@ -14,10 +14,22 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  AreaChart,
+  Area
 } from "recharts"
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
+
+interface GameHistory {
+  savings: number
+  debt: number
+  income: number
+  health: number
+  happiness: number
+  risk: number
+  timestamp: number
+}
 
 interface FinancialChartsProps {
   savings: number
@@ -27,6 +39,7 @@ interface FinancialChartsProps {
   health: number
   happiness: number
   risk: number
+  gameHistory: GameHistory[]
 }
 
 export function FinancialCharts({
@@ -36,7 +49,8 @@ export function FinancialCharts({
   expenses,
   health,
   happiness,
-  risk
+  risk,
+  gameHistory
 }: FinancialChartsProps) {
   const financialData = [
     { name: "Savings", value: savings },
@@ -50,6 +64,13 @@ export function FinancialCharts({
     { name: "Happiness", value: happiness },
     { name: "Risk", value: risk }
   ]
+
+  const progressData = gameHistory.map((entry, index) => ({
+    name: `Decision ${index + 1}`,
+    savings: entry.savings,
+    debt: entry.debt,
+    income: entry.income
+  }))
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,6 +118,49 @@ export function FinancialCharts({
                 <Legend />
                 <Bar dataKey="value" fill="#8884d8" />
               </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="md:col-span-2">
+        <CardHeader>
+          <CardTitle>Financial Progress</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={progressData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area
+                  type="monotone"
+                  dataKey="savings"
+                  stackId="1"
+                  stroke="#0088FE"
+                  fill="#0088FE"
+                  fillOpacity={0.3}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="debt"
+                  stackId="2"
+                  stroke="#FF8042"
+                  fill="#FF8042"
+                  fillOpacity={0.3}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stackId="3"
+                  stroke="#00C49F"
+                  fill="#00C49F"
+                  fillOpacity={0.3}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
