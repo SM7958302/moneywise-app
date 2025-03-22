@@ -7,191 +7,136 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
+import { scenarios } from "@/lib/game-data"
+import { FinancialCharts } from "@/components/ui/financial-charts"
 
-interface Scenario {
-  id: number
-  title: string
-  description: string
-  options: {
-    text: string
-    impact: {
-      savings?: number
-      debt?: number
-      income?: number
-      health?: number
-      happiness?: number
-      risk?: number
-      xp: number
-    }
-    feedback: string
-  }[]
+interface ScenarioOption {
+  text: string
+  impact: {
+    savings: number
+    debt: number
+    income: number
+    health: number
+    happiness: number
+    risk: number
+    xp: number
+  }
+  feedback: string
 }
 
-const scenarios: Scenario[] = [
-  {
-    id: 1,
-    title: "Emergency Car Repair",
-    description: "Your car breaks down and needs a $2000 repair. What do you do?",
-    options: [
-      {
-        text: "Use emergency fund",
-        impact: { savings: -2000, health: 10, xp: 80 },
-        feedback: "Smart choice! Using your emergency fund is exactly what it's for.",
-      },
-      {
-        text: "Take out a loan",
-        impact: { debt: 2000, health: -10, xp: 40 },
-        feedback: "While this works, it adds interest costs. Consider building an emergency fund for next time.",
-      },
-      {
-        text: "Delay repair",
-        impact: { health: -20, happiness: -10, xp: 20 },
-        feedback: "Delaying repairs can lead to bigger problems and higher costs later.",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Job Opportunity",
-    description: "You're offered a new job with higher pay but requires moving. What's your decision?",
-    options: [
-      {
-        text: "Negotiate relocation package",
-        impact: { income: 1000, savings: 5000, happiness: 10, xp: 90 },
-        feedback: "Great negotiation! A relocation package helps offset moving costs.",
-      },
-      {
-        text: "Accept without package",
-        impact: { income: 1000, savings: -2000, happiness: 5, xp: 60 },
-        feedback: "While the pay increase is good, moving costs can be significant.",
-      },
-      {
-        text: "Stay at current job",
-        impact: { happiness: -10, xp: 30 },
-        feedback: "Staying comfortable can mean missing growth opportunities.",
-      },
-    ],
-  }
-]
-
 export default function BudgetHeroGame() {
-  const { addXP, level, xp, xpToNextLevel } = useGame()
-  const [currentScenario, setCurrentScenario] = useState(0)
+  const { addXP, level, xp, xpToNextLevel, completeScenario } = useGame()
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0)
   const [gameState, setGameState] = useState({
-    savings: 5000,
+    savings: 1000,
     debt: 0,
     income: 3000,
+    expenses: 2000,
     health: 100,
-    happiness: 50,
-    risk: 0,
+    happiness: 100,
+    risk: 0
   })
   const [showFeedback, setShowFeedback] = useState(false)
   const [feedback, setFeedback] = useState("")
   const [gameComplete, setGameComplete] = useState(false)
 
-  const handleChoice = (option: Scenario["options"][0]) => {
-    const newState = { ...gameState }
-    Object.entries(option.impact).forEach(([key, value]) => {
-      if (key === "xp") {
-        addXP(value)
-      } else {
-        newState[key as keyof typeof newState] += value
-      }
-    })
-    setGameState(newState)
+  const currentScenario = scenarios[currentScenarioIndex]
+  if (!currentScenario || !currentScenario.options) return null
+
+  const handleChoice = (option: ScenarioOption) => {
+    // Update game state based on choice impact
+    setGameState(prev => ({
+      savings: Math.max(0, prev.savings + option.impact.savings),
+      debt: Math.max(0, prev.debt + option.impact.debt),
+      income: Math.max(0, prev.income + option.impact.income),
+      expenses: Math.max(0, prev.expenses),
+      health: Math.max(0, Math.min(100, prev.health + option.impact.health)),
+      happiness: Math.max(0, Math.min(100, prev.happiness + option.impact.happiness)),
+      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
+    }))
+
+    // Add XP and complete scenario
+    addXP(option.impact.xp)
+    completeScenario(currentScenario.id)
+
+    // Show feedback
     setFeedback(option.feedback)
     setShowFeedback(true)
 
+    // Move to next scenario after delay
     setTimeout(() => {
-      if (currentScenario < scenarios.length - 1) {
-        setCurrentScenario(currentScenario + 1)
+      if (currentScenarioIndex < scenarios.length - 1) {
+        setCurrentScenarioIndex(prev => prev + 1)
         setShowFeedback(false)
       } else {
         setGameComplete(true)
       }
-    }, 2000)
+    }, 3000)
   }
 
   const resetGame = () => {
-    setCurrentScenario(0)
+    setCurrentScenarioIndex(0)
     setGameState({
-      savings: 5000,
+      savings: 1000,
       debt: 0,
       income: 3000,
+      expenses: 2000,
       health: 100,
-      happiness: 50,
-      risk: 0,
+      happiness: 100,
+      risk: 0
     })
     setShowFeedback(false)
     setGameComplete(false)
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Budget Hero</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">
-            Level {level} • {xp}/{xpToNextLevel} XP
-          </div>
-          <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
+    <div className="container mx-auto p-4 space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-2">Budget Hero</h1>
+          <p className="text-muted-foreground">
+            Make smart financial decisions and learn about money management
+          </p>
         </div>
-      </div>
 
-      {!gameComplete ? (
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScenario}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">
-                  Scenario {currentScenario + 1} of {scenarios.length}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div>
-                    <h2 className="text-lg font-semibold mb-2">
-                      {scenarios[currentScenario].title}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {scenarios[currentScenario].description}
-                    </p>
-                  </div>
+        <FinancialCharts {...gameState} />
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {scenarios[currentScenario].options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="h-auto py-4"
-                        onClick={() => handleChoice(option)}
-                      >
-                        {option.text}
-                      </Button>
-                    ))}
-                  </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{currentScenario.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-lg">{currentScenario.description}</p>
+            <div className="grid gap-4">
+              {currentScenario.options.map((option, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="w-full text-left h-auto py-4"
+                  onClick={() => handleChoice(option)}
+                >
+                  {option.text}
+                </Button>
+              ))}
+            </div>
+            {showFeedback && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 bg-muted rounded-lg"
+              >
+                <p className="text-sm">{feedback}</p>
+              </motion.div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
-                  {showFeedback && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-4 bg-primary/10 rounded-lg"
-                    >
-                      {feedback}
-                    </motion.div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </AnimatePresence>
-      ) : (
+      {gameComplete && (
         <Card>
           <CardHeader>
             <CardTitle>Game Complete!</CardTitle>
