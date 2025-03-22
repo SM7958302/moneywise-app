@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { GameProvider } from "@/context/GameContext";
 import { FriendsProvider } from "@/context/FriendsContext";
+import { ForumProvider } from "@/context/ForumContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,9 @@ export default function RootLayout({
         >
           <GameProvider>
             <FriendsProvider>
-              {children}
+              <ForumProvider>
+                {children}
+              </ForumProvider>
             </FriendsProvider>
           </GameProvider>
         </ThemeProvider>
