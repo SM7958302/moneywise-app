@@ -8,6 +8,8 @@ import { savingScenarios, type Scenario, type Difficulty, type ScenarioOption } 
 import { useToast, Toast } from "@/components/ui/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
+import { DetailedFeedback } from '@/components/DetailedFeedback'
+import { FinancialTooltip } from '@/components/FinancialTooltip'
 
 export default function SavingsQuestGame() {
   const [currentScenario, setCurrentScenario] = useState<Scenario | null>(null)
@@ -28,6 +30,7 @@ export default function SavingsQuestGame() {
   const [showDifficultySelector, setShowDifficultySelector] = useState(true)
   const [gameOver, setGameOver] = useState(false)
   const { toast, toasts } = useToast()
+  const [showFeedback, setShowFeedback] = useState(false)
 
   useEffect(() => {
     if (!showDifficultySelector && !gameOver) {
@@ -78,6 +81,7 @@ export default function SavingsQuestGame() {
 
     setSelectedOption(option)
     setTimeLeft(0) // Stop the timer
+    setShowFeedback(true) // Show feedback
 
     // Update player stats
     setPlayerStats(prev => {
@@ -98,8 +102,9 @@ export default function SavingsQuestGame() {
 
     // Show feedback and move to next scenario after a delay
     setTimeout(() => {
+      setShowFeedback(false)
       loadNextScenario()
-    }, 2000)
+    }, 3000)
   }
 
   const getDifficultyColor = (diff: Difficulty) => {
@@ -180,7 +185,7 @@ export default function SavingsQuestGame() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 space-y-6">
       <Card className="p-6">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Savings Quest</h1>
@@ -203,18 +208,33 @@ export default function SavingsQuestGame() {
           <p className="text-gray-600">{currentScenario.description}</p>
         </div>
 
-        <div className="grid gap-4 mb-6">
-          {currentScenario.options.map((option, index) => (
-            <Button
-              key={index}
-              variant={selectedOption === option ? "default" : "outline"}
-              className="w-full text-left justify-start"
-              onClick={() => handleOptionSelect(option)}
-              disabled={selectedOption !== null}
-            >
-              {option.text}
-            </Button>
-          ))}
+        <div className="space-y-4">
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold mb-4">{currentScenario.title}</h2>
+            <p className="text-gray-600 mb-6">{currentScenario.description}</p>
+            
+            <div className="space-y-4">
+              {currentScenario.options.map((option, index) => (
+                <Button
+                  key={index}
+                  onClick={() => handleOptionSelect(option)}
+                  disabled={!!selectedOption}
+                  variant="outline"
+                  className="w-full text-left justify-start h-auto py-4"
+                >
+                  {option.text}
+                </Button>
+              ))}
+            </div>
+          </Card>
+
+          {showFeedback && selectedOption && (
+            <DetailedFeedback
+              feedback={selectedOption.feedback}
+              impact={selectedOption.impact}
+              isCorrect={selectedOption.impact.xp > 50} // Consider it correct if XP reward is high
+            />
+          )}
         </div>
 
         <div className="space-y-4">
