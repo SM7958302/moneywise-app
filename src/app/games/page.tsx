@@ -37,7 +37,7 @@ const games = [
 ]
 
 export default function GamesPage() {
-  const { progress } = useGame()
+  const { progress, xp } = useGame()
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -103,7 +103,7 @@ export default function GamesPage() {
                 </div>
                 <div>
                   <p className="font-medium">Total XP</p>
-                  <p className="text-2xl font-bold">{progress.xp}</p>
+                  <p className="text-2xl font-bold">{xp}</p>
                 </div>
               </div>
               <div className="p-4 bg-blue-50 rounded-lg">
