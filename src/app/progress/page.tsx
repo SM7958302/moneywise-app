@@ -37,9 +37,9 @@ export default function ProgressPage() {
     completionPercentage: (completedScenarios.length / achievements.length) * 100
   }
 
-  const calculateProgress = (category: string) => {
-    const completed = completedScenarios.filter(s => s.category === category).length
-    const total = scenarios.filter(s => s.category === category).length
+  const calculateProgress = (gameId: string) => {
+    const completed = completedScenarios.filter(s => s.id.startsWith(gameId)).length
+    const total = scenarios.filter(s => s.id.startsWith(gameId)).length
     return total > 0 ? Math.min(100, (completed / total) * 100) : 0
   }
 
