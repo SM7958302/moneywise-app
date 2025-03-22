@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
-import { scenarios } from "@/lib/game-data"
+import { scenarios, levels } from "@/lib/game-data"
+import { MiniGame } from "@/components/ui/mini-games"
 
 interface ScenarioOption {
   text: string
@@ -44,6 +45,11 @@ export default function BudgetHeroGame() {
   const [gameComplete, setGameComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showMiniGame, setShowMiniGame] = useState(false)
+  const [currentOption, setCurrentOption] = useState<ScenarioOption | null>(null)
+  const [currentFeedback, setCurrentFeedback] = useState("")
+  const [prevXP, setPrevXP] = useState(0)
+  const [currentLevel, setCurrentLevel] = useState(0)
 
   useEffect(() => {
     try {
@@ -62,37 +68,42 @@ export default function BudgetHeroGame() {
   if (!currentScenario || !currentScenario.options) return null
 
   const handleChoice = (option: ScenarioOption) => {
-    try {
-      // Update game state based on choice impact
-      setGameState(prev => ({
-        savings: Math.max(0, prev.savings + option.impact.savings),
-        debt: Math.max(0, prev.debt + option.impact.debt),
-        income: Math.max(0, prev.income + option.impact.income),
-        health: Math.max(0, Math.min(100, prev.health + (option.impact.health ?? 0))),
-        happiness: Math.max(0, Math.min(100, prev.happiness + (option.impact.happiness ?? 0))),
-        risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
-      }))
+    setShowFeedback(true)
+    setCurrentFeedback(option.feedback)
+    setCurrentOption(option)
+    setShowMiniGame(!!option.miniGame)
 
-      // Add XP and complete scenario
-      addXP(option.impact.xp)
-      completeScenario(currentScenario.id)
+    // Update game state with the impact
+    setGameState(prev => ({
+      savings: Math.max(0, prev.savings + option.impact.savings),
+      debt: Math.max(0, prev.debt + option.impact.debt),
+      income: Math.max(0, prev.income + option.impact.income),
+      health: Math.max(0, Math.min(100, prev.health + (option.impact.health ?? 0))),
+      happiness: Math.max(0, Math.min(100, prev.happiness + (option.impact.happiness ?? 0))),
+      risk: Math.max(0, Math.min(100, prev.risk + option.impact.risk))
+    }))
 
-      // Show feedback
-      setFeedback(option.feedback)
-      setShowFeedback(true)
-
-      // Move to next scenario after delay
-      setTimeout(() => {
-        if (currentScenarioIndex < scenarios.length - 1) {
-          setCurrentScenarioIndex(prev => prev + 1)
-          setShowFeedback(false)
-        } else {
-          setGameComplete(true)
-        }
-      }, 3000)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+    // Update XP and check for level up
+    const newXP = prevXP + option.impact.xp
+    setPrevXP(newXP)
+    const newLevel = levels.findIndex((level: { xpNeeded: number }) => level.xpNeeded > newXP)
+    if (newLevel > currentLevel) {
+      setCurrentLevel(newLevel)
     }
+
+    // Add XP and complete scenario
+    addXP(option.impact.xp)
+    completeScenario(currentScenario.id)
+
+    // Move to next scenario after delay
+    setTimeout(() => {
+      setShowFeedback(false)
+      if (currentScenarioIndex < scenarios.length - 1) {
+        setCurrentScenarioIndex(prev => prev + 1)
+      } else {
+        setGameComplete(true)
+      }
+    }, 3000)
   }
 
   const resetGame = () => {
