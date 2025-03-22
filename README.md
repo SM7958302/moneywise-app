@@ -133,5 +133,5 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 ---
 
-Made with ❤️ by [Your Name/Team]
+Made with ❤️ by [DATA SENTINELS]
 
