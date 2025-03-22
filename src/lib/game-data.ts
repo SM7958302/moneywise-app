@@ -241,48 +241,57 @@ export const scenarios = [
     ]
   },
   {
-    id: "credit-card-management",
+    id: "credit_card",
     title: "Credit Card Management",
-    description: "You've received your first credit card with a $1,000 limit. You need to make some essential purchases and want to manage your credit responsibly.",
+    description: "You have a credit card with a $5,000 limit. How will you use it?",
     options: [
       {
-        text: "Use the card for all purchases and pay minimum balance",
+        text: "Max out the card",
         impact: {
-          savings: -300,
-          debt: 1000,
+          savings: 0,
+          debt: 5000,
           income: 0,
-          health: -15,
-          happiness: -15,
-          risk: 25,
-          xp: 15
+          discipline: -30,
+          risk: 40,
+          xp: 10
         },
-        feedback: "Using only minimum payments leads to high interest charges and growing debt. This is not a sustainable approach and can damage your credit score."
+        feedback: "Maxing out your credit card can lead to high interest charges and damage your credit score. Always keep your credit utilization low.",
+        miniGame: {
+          type: "budget_planner" as const,
+          bonus: 5
+        }
       },
       {
-        text: "Use card for emergencies only and pay full balance",
+        text: "Use for emergencies only",
         impact: {
-          savings: 200,
+          savings: 0,
           debt: 0,
           income: 0,
-          health: 15,
-          happiness: 15,
-          risk: -15,
-          xp: 60
+          discipline: 20,
+          risk: -10,
+          xp: 40
         },
-        feedback: "Smart choice! Using credit cards only for emergencies and paying in full helps build good credit without accumulating debt. This is the ideal way to use credit cards."
+        feedback: "Smart approach! Using credit cards only for emergencies helps you maintain good financial health.",
+        miniGame: {
+          type: "budget_planner" as const,
+          bonus: 20
+        }
       },
       {
-        text: "Use 30% of limit and pay full balance monthly",
+        text: "Use for daily expenses",
         impact: {
-          savings: 100,
-          debt: 0,
+          savings: 0,
+          debt: 2000,
           income: 0,
-          health: 10,
-          happiness: 10,
-          risk: -5,
-          xp: 45
+          discipline: -10,
+          risk: 20,
+          xp: 20
         },
-        feedback: "Good approach! Using less than 30% of your credit limit and paying in full shows responsible credit management. This helps build a good credit score."
+        feedback: "While using credit cards for daily expenses can be convenient, make sure to pay off the balance in full each month.",
+        miniGame: {
+          type: "budget_planner" as const,
+          bonus: 10
+        }
       }
     ]
   },
