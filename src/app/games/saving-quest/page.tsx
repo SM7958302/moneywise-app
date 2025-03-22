@@ -5,7 +5,7 @@ import { useGame } from "@/context/GameContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { ShareButton } from "@/components/ui/share-button"
 import { savingScenarios } from "@/lib/game-data"
 
@@ -126,86 +126,97 @@ export default function SavingQuestGame() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
-      >
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">Saving Quest</h1>
-          <p className="text-muted-foreground">
-            Master the art of saving and financial discipline
-          </p>
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <div className="text-sm">
-              Level {level} • {xp}/{xpToNextLevel} XP
-            </div>
-            <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Saving Quest</h1>
+        <div className="flex items-center gap-4">
+          <div className="text-sm">
+            Level {level} • {xp}/{xpToNextLevel} XP
           </div>
+          <Progress value={(xp / xpToNextLevel) * 100} className="w-32" />
         </div>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{currentScenario.title}</CardTitle>
-            <div className="text-sm text-muted-foreground">
-              Scenario {currentScenarioIndex + 1} of {savingScenarios.length}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-lg">{currentScenario.description}</p>
-            <div className="grid gap-4">
-              {currentScenario.options.map((option, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full text-left h-auto py-4"
-                  onClick={() => handleChoice(option)}
-                >
-                  {option.text}
-                </Button>
-              ))}
-            </div>
-            {showFeedback && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-4 bg-muted rounded-lg"
-              >
-                <p className="text-sm">{feedback}</p>
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
+      {!gameComplete ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentScenarioIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">
+                  Scenario {currentScenarioIndex + 1} of {savingScenarios.length}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold mb-2">
+                      {currentScenario.title}
+                    </h2>
+                    <p className="text-muted-foreground">
+                      {currentScenario.description}
+                    </p>
+                  </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Current Stats</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Savings</p>
-                <p className="text-2xl font-bold">${gameState.savings}</p>
-              </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Debt</p>
-                <p className="text-2xl font-bold">${gameState.debt}</p>
-              </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Income</p>
-                <p className="text-2xl font-bold">${gameState.income}</p>
-              </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground">Discipline</p>
-                <p className="text-2xl font-bold">{gameState.discipline}%</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {currentScenario.options.map((option, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="h-auto py-4"
+                        onClick={() => handleChoice(option)}
+                      >
+                        {option.text}
+                      </Button>
+                    ))}
+                  </div>
 
-      {gameComplete && (
+                  {showFeedback && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-4 bg-primary/10 rounded-lg"
+                    >
+                      {feedback}
+                    </motion.div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Current Stats</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Savings</p>
+                    <p className="text-2xl font-bold">${gameState.savings}</p>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Debt</p>
+                    <p className="text-2xl font-bold">${gameState.debt}</p>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Income</p>
+                    <p className="text-2xl font-bold">${gameState.income}</p>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Discipline</p>
+                    <p className="text-2xl font-bold">{gameState.discipline}%</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </AnimatePresence>
+      ) : (
         <Card>
           <CardHeader>
             <CardTitle>Game Complete!</CardTitle>
