@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { useGame } from "@/context/GameContext"
 import { scenarios } from "@/lib/game-data"
 import { AchievementsPanel } from "@/components/game/AchievementsPanel"
+import { FriendsPanel } from "@/components/game/FriendsPanel"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function BudgetHeroGame() {
   const { addXP, unlockAchievement, completeScenario, progress } = useGame()
@@ -125,6 +127,7 @@ export default function BudgetHeroGame() {
                   <li>💰 Manage your income and expenses</li>
                   <li>🏆 Earn achievements and XP</li>
                   <li>📈 Build good saving habits</li>
+                  <li>🤝 Challenge friends and compete</li>
                 </ul>
                 <p className="text-muted-foreground mb-6">
                   Ready to start your journey to financial mastery?
@@ -162,11 +165,11 @@ export default function BudgetHeroGame() {
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Achieve</CardTitle>
+                  <CardTitle>Compete</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Earn rewards and track your progress
+                    Challenge friends and climb the leaderboard
                   </p>
                 </CardContent>
               </Card>
@@ -285,7 +288,18 @@ export default function BudgetHeroGame() {
         </motion.div>
 
         <div className="md:col-span-1">
-          <AchievementsPanel />
+          <Tabs defaultValue="achievements">
+            <TabsList className="w-full">
+              <TabsTrigger value="achievements" className="flex-1">Achievements</TabsTrigger>
+              <TabsTrigger value="friends" className="flex-1">Friends</TabsTrigger>
+            </TabsList>
+            <TabsContent value="achievements">
+              <AchievementsPanel />
+            </TabsContent>
+            <TabsContent value="friends">
+              <FriendsPanel />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
