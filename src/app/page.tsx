@@ -3,36 +3,49 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-const features = [
+const games = [
   {
-    title: "Interactive Learning",
-    description: "Learn financial concepts through engaging interactive modules and real-world scenarios.",
-    href: "/learn"
+    id: "budget-hero",
+    title: "Budget Hero",
+    description: "Master budgeting skills by managing virtual finances",
+    difficulty: "easy",
+    color: "bg-green-500"
   },
   {
-    title: "Financial Games",
-    description: "Play fun games that teach budgeting, investing, and money management skills.",
-    href: "/games"
+    id: "market-master",
+    title: "Market Master",
+    description: "Learn investment strategies through simulated trading",
+    difficulty: "medium",
+    color: "bg-blue-500"
   },
   {
-    title: "Smart Tools",
-    description: "Use AI-powered calculators and tools to make informed financial decisions.",
-    href: "/tools"
+    id: "savings-quest",
+    title: "Savings Quest",
+    description: "Complete challenges to build smart saving habits",
+    difficulty: "easy",
+    color: "bg-purple-500"
+  }
+]
+
+const tools = [
+  {
+    id: "compound-calculator",
+    title: "Compound Interest Calculator",
+    description: "See how your money grows over time",
+    color: "bg-yellow-500"
   },
   {
-    title: "Track Progress",
-    description: "Monitor your learning journey and earn rewards as you master new skills.",
-    href: "/progress"
+    id: "budget-planner",
+    title: "Budget Planner",
+    description: "Plan and track your monthly expenses",
+    color: "bg-pink-500"
   }
 ]
 
 export default function HomePage() {
   const [greeting, setGreeting] = useState("")
-  const [error, setError] = useState("")
 
   useEffect(() => {
     fetch("/welcome")
@@ -50,34 +63,73 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-center space-y-8"
-      >
-        <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-          MoneyWise
-        </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-          {greeting}
-        </p>
-        <div className="flex flex-col md:flex-row gap-4 justify-center">
-          <Link
-            href="/games"
-            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Start Playing
-          </Link>
-          <Link
-            href="/learn"
-            className="inline-flex items-center justify-center px-6 py-3 text-lg font-medium text-secondary-foreground bg-secondary rounded-lg hover:bg-secondary/90 transition-colors"
-          >
-            Start Learning
-          </Link>
-        </div>
-      </motion.div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center space-y-8 mb-16"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground">
+            MoneyWise
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+            {greeting}
+          </p>
+        </motion.div>
+
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Financial Games</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {games.map((game) => (
+              <motion.div
+                key={game.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Link href={`/games/${game.id}`}>
+                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <div className={`w-full h-32 rounded-t-lg ${game.color} mb-4`} />
+                      <CardTitle>{game.title}</CardTitle>
+                      <CardDescription>{game.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm text-muted-foreground">
+                        Difficulty: {game.difficulty}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-3xl font-bold mb-8 text-center">Financial Tools</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tools.map((tool) => (
+              <motion.div
+                key={tool.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Link href={`/tools/${tool.id}`}>
+                  <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                    <CardHeader>
+                      <div className={`w-full h-32 rounded-t-lg ${tool.color} mb-4`} />
+                      <CardTitle>{tool.title}</CardTitle>
+                      <CardDescription>{tool.description}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   )
 }
