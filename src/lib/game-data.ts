@@ -1094,704 +1094,432 @@ const hardScenarios: Scenario[] = [
   }
 ]
 
-// Market Master scenarios
-const marketMasterScenarios: Scenario[] = [
+// Budget Hero Scenarios
+const budgetScenarios: Scenario[] = [
   {
-    id: "stock_basics",
-    title: "Stock Market Basics",
-    description: "You're learning about stocks. What's the best way to start?",
+    id: "budget_emergency",
+    title: "Unexpected Medical Bill",
+    description: "You receive an unexpected medical bill for $500. How do you handle it?",
     difficulty: "easy",
     options: [
       {
-        text: "Research and invest in index funds",
+        text: "Use your emergency fund",
         impact: {
-          savings: 500,
-          debt: 0,
-          income: 100,
-          health: 5,
+          savings: -500,
+          health: 10,
           happiness: 5,
-          discipline: 15,
-          risk: -10,
+          discipline: 10,
+          risk: -5,
+          xp: 75
+        },
+        feedback: "Great choice! This is exactly what emergency funds are for. You maintained your health without taking on debt."
+      },
+      {
+        text: "Put it on a credit card",
+        impact: {
+          debt: 500,
+          health: 10,
+          happiness: -5,
+          discipline: -5,
+          risk: 15,
+          xp: 25
+        },
+        feedback: "While you addressed the medical need, using credit for emergencies can lead to costly debt. Consider building an emergency fund."
+      },
+      {
+        text: "Negotiate a payment plan",
+        impact: {
+          debt: 100,
+          health: 10,
+          happiness: 0,
+          discipline: 5,
+          risk: 5,
           xp: 50
         },
-        feedback: "Great choice! Index funds provide diversification and are a safer way to start investing.",
-        miniGame: {
-          type: "stock_picker",
-          bonus: 20
-        }
-      },
-      {
-        text: "Invest all money in a single stock",
-        impact: {
-          savings: 200,
-          debt: 0,
-          income: 50,
-          health: -5,
-          happiness: 5,
-          discipline: -10,
-          risk: 30,
-          xp: 20
-        },
-        feedback: "Investing in a single stock is risky. Diversification is key to managing risk.",
-        miniGame: {
-          type: "stock_picker",
-          bonus: 30
-        }
-      },
-      {
-        text: "Keep money in savings account only",
-        impact: {
-          savings: 100,
-          debt: 0,
-          income: 0,
-          health: 5,
-          happiness: 5,
-          discipline: 5,
-          risk: -5,
-          xp: 10
-        },
-        feedback: "While safe, you might miss out on potential growth. Consider a balanced investment strategy.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
+        feedback: "Good thinking! Payment plans can help manage large expenses, though having an emergency fund would be ideal."
       }
     ]
   },
   {
-    id: "market_timing",
-    title: "Market Timing",
-    description: "The market is showing high volatility. What should you do?",
+    id: "budget_salary",
+    title: "First Salary Decision",
+    description: "You just received your first salary. How do you allocate it?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Save 20%, budget the rest",
+        impact: {
+          savings: 600,
+          income: 2400,
+          happiness: 5,
+          discipline: 15,
+          risk: -5,
+          xp: 80
+        },
+        feedback: "Excellent! The 20% savings rule is a great foundation for financial health."
+      },
+      {
+        text: "Spend it all on entertainment",
+        impact: {
+          happiness: 15,
+          discipline: -20,
+          risk: 10,
+          xp: 10
+        },
+        feedback: "While having fun is important, not saving anything from your salary can lead to financial stress later."
+      },
+      {
+        text: "Save 50% for a big purchase",
+        impact: {
+          savings: 1500,
+          income: 1500,
+          happiness: -5,
+          discipline: 20,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "High savings rate is commendable, but ensure it's sustainable and doesn't impact your essential needs."
+      }
+    ]
+  },
+  {
+    id: "budget_rent",
+    title: "Housing Decision",
+    description: "You're looking for an apartment. How much of your income should go to rent?",
     difficulty: "medium",
     options: [
       {
-        text: "Stay invested and maintain your strategy",
+        text: "30% of income (recommended)",
         impact: {
-          savings: 1000,
-          debt: 0,
-          income: 200,
-          health: 10,
-          happiness: 5,
-          discipline: 20,
-          risk: -15,
-          xp: 60
+          savings: 300,
+          income: -900,
+          happiness: 10,
+          discipline: 15,
+          risk: -5,
+          xp: 75
         },
-        feedback: "Smart decision! Time in the market is better than timing the market.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 25
-        }
+        feedback: "Perfect! The 30% rule is a sustainable approach to housing costs."
       },
       {
-        text: "Sell everything and wait",
+        text: "50% of income (nicer place)",
         impact: {
-          savings: -500,
-          debt: 0,
-          income: 0,
-          health: -5,
-          happiness: -5,
+          savings: -200,
+          income: -1500,
+          happiness: 15,
           discipline: -10,
           risk: 20,
-          xp: 20
+          xp: 25
         },
-        feedback: "Selling during volatility can lock in losses. Stay focused on your long-term goals.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
+        feedback: "While a nice place is great, spending too much on rent can strain your finances."
       },
       {
-        text: "Double down on investments",
+        text: "20% of income (with roommates)",
         impact: {
           savings: 500,
-          debt: 0,
-          income: 100,
-          health: -5,
-          happiness: 5,
-          discipline: -5,
-          risk: 40,
-          xp: 30
+          income: -600,
+          happiness: 0,
+          discipline: 20,
+          risk: 0,
+          xp: 60
         },
-        feedback: "While tempting, increasing risk during volatility can be dangerous.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
+        feedback: "Frugal choice! Living with roommates can help save money, but consider your comfort and privacy needs."
       }
     ]
   },
   {
-    id: "portfolio_management",
-    title: "Portfolio Management",
-    description: "Your portfolio needs rebalancing. What's the best approach?",
+    id: "budget_investment",
+    title: "Investment Opportunity",
+    description: "A friend presents an investment opportunity promising 20% returns. What do you do?",
     difficulty: "hard",
     options: [
       {
-        text: "Rebalance to target allocation",
+        text: "Research thoroughly first",
         impact: {
-          savings: 2000,
-          debt: 0,
-          income: 400,
-          health: 15,
-          happiness: 10,
-          discipline: 25,
-          risk: -20,
-          xp: 70
+          discipline: 15,
+          risk: -10,
+          xp: 80
         },
-        feedback: "Excellent! Regular rebalancing helps maintain your desired risk level.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 25
-        }
+        feedback: "Smart move! Due diligence is crucial before any investment."
       },
       {
-        text: "Let winners run",
-        impact: {
-          savings: 1000,
-          debt: 0,
-          income: 200,
-          health: 5,
-          happiness: 5,
-          discipline: -10,
-          risk: 30,
-          xp: 30
-        },
-        feedback: "While tempting, letting winners run can lead to an unbalanced portfolio.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
-      },
-      {
-        text: "Sell everything and start fresh",
+        text: "Invest immediately",
         impact: {
           savings: -1000,
-          debt: 0,
-          income: 0,
-          health: -10,
           happiness: -10,
-          discipline: -20,
-          risk: 40,
-          xp: 15
+          discipline: -15,
+          risk: 30,
+          xp: 20
         },
-        feedback: "Starting fresh can be costly. Regular rebalancing is more effective.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
+        feedback: "Rushing into investments without research is risky. High returns often come with high risks."
+      },
+      {
+        text: "Consult a financial advisor",
+        impact: {
+          savings: -200,
+          discipline: 10,
+          risk: -5,
+          xp: 60
+        },
+        feedback: "Good thinking! Professional advice can help evaluate investment opportunities."
       }
     ]
   }
 ]
 
-// Savings Quest scenarios
-const savingsQuestScenarios: Scenario[] = [
+// Market Master Scenarios
+const marketMasterScenarios: Scenario[] = [
   {
-    id: "emergency_fund",
-    title: "Emergency Fund",
-    description: "You've received a bonus. How should you use it?",
+    id: "market_basics",
+    title: "Stock Market Basics",
+    description: "You have $1000 to start investing. What's your first move?",
     difficulty: "easy",
     options: [
       {
-        text: "Add to emergency fund",
+        text: "Buy a diversified index fund",
         impact: {
-          savings: 1000,
-          debt: 0,
-          income: 0,
-          health: 15,
-          happiness: 10,
-          discipline: 20,
-          risk: -15,
-          xp: 50
+          portfolio: 1000,
+          cash: -1000,
+          knowledge: 15,
+          risk: 5,
+          xp: 80
         },
-        feedback: "Smart choice! An emergency fund provides financial security.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
+        feedback: "Excellent choice! Index funds offer broad market exposure and are great for beginners."
       },
       {
-        text: "Treat yourself to something nice",
+        text: "Buy a single popular tech stock",
         impact: {
-          savings: -500,
-          debt: 0,
-          income: 0,
-          health: 5,
-          happiness: 15,
-          discipline: -10,
-          risk: 10,
-          xp: 20
-        },
-        feedback: "While fun, prioritizing savings helps build long-term security.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
-      },
-      {
-        text: "Invest in stocks",
-        impact: {
-          savings: 200,
-          debt: 0,
-          income: 50,
-          health: 5,
-          happiness: 5,
-          discipline: 5,
+          portfolio: 1000,
+          cash: -1000,
+          knowledge: 5,
           risk: 20,
           xp: 30
         },
-        feedback: "While investing is good, an emergency fund should come first.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
+        feedback: "Single stocks carry more risk. Consider diversifying to reduce potential losses."
+      },
+      {
+        text: "Research more before investing",
+        impact: {
+          knowledge: 20,
+          risk: -5,
+          xp: 60
+        },
+        feedback: "Smart! Understanding the market before investing is crucial for long-term success."
       }
     ]
   },
   {
-    id: "retirement_planning",
-    title: "Retirement Planning",
-    description: "You're planning for retirement. What's the best strategy?",
+    id: "market_dip",
+    title: "Market Dip",
+    description: "The market has dropped 10% this week. What's your move?",
     difficulty: "medium",
     options: [
       {
-        text: "Start early and contribute regularly",
+        text: "Hold and stick to your strategy",
         impact: {
-          savings: 2000,
-          debt: 0,
-          income: 300,
-          health: 15,
-          happiness: 15,
-          discipline: 25,
-          risk: -15,
-          xp: 60
+          knowledge: 15,
+          risk: 0,
+          xp: 75
         },
-        feedback: "Perfect! Starting early and being consistent is key to retirement success.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 25
-        }
+        feedback: "Great discipline! Long-term investors often benefit from staying the course during market dips."
       },
       {
-        text: "Wait until you're older",
+        text: "Sell everything to prevent losses",
         impact: {
-          savings: 500,
-          debt: 0,
-          income: 50,
-          health: 5,
-          happiness: 5,
-          discipline: -10,
-          risk: 20,
+          portfolio: -5000,
+          cash: 4500,
+          knowledge: 5,
+          risk: -10,
           xp: 20
         },
-        feedback: "The earlier you start, the more time your money has to grow.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
+        feedback: "Selling in panic often locks in losses. Market downturns are normal and temporary."
       },
       {
-        text: "Save everything for retirement",
+        text: "Buy more while prices are low",
         impact: {
-          savings: 1500,
-          debt: 0,
-          income: 200,
-          health: -5,
-          happiness: -5,
-          discipline: 15,
-          risk: -10,
-          xp: 30
+          portfolio: 2000,
+          cash: -2000,
+          knowledge: 20,
+          risk: 10,
+          xp: 70
         },
-        feedback: "While saving is important, balance is key to financial well-being.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
+        feedback: "Good thinking! Market dips can be opportunities to buy quality investments at lower prices."
       }
     ]
   },
   {
-    id: "tax_optimization",
-    title: "Tax Optimization",
-    description: "You're optimizing your savings for taxes. What's the best approach?",
+    id: "market_crypto",
+    title: "Cryptocurrency Investment",
+    description: "You're considering investing in cryptocurrency. What's your approach?",
     difficulty: "hard",
     options: [
       {
-        text: "Maximize tax-advantaged accounts",
+        text: "Invest a small portion (1-5%) of portfolio",
         impact: {
-          savings: 3000,
-          debt: 0,
-          income: 500,
-          health: 15,
-          happiness: 15,
-          discipline: 30,
-          risk: -20,
+          portfolio: 500,
+          cash: -500,
+          knowledge: 15,
+          risk: 10,
           xp: 70
         },
-        feedback: "Excellent! Tax-advantaged accounts help your money grow faster.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 25
-        }
+        feedback: "Balanced approach! Limiting high-risk investments to a small portion of your portfolio is wise."
       },
       {
-        text: "Keep everything in regular savings",
+        text: "Go all in on crypto",
         impact: {
-          savings: 1000,
-          debt: 0,
-          income: 100,
-          health: 5,
-          happiness: 5,
-          discipline: 5,
-          risk: -5,
+          portfolio: 0,
+          cash: -5000,
+          knowledge: 5,
+          risk: 40,
           xp: 20
         },
-        feedback: "You're missing out on tax benefits. Consider tax-advantaged accounts.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
+        feedback: "Very risky! Cryptocurrency is highly volatile. Never invest more than you can afford to lose."
       },
       {
-        text: "Invest only in stocks",
+        text: "Avoid cryptocurrency entirely",
         impact: {
-          savings: 1500,
-          debt: 0,
-          income: 200,
-          health: -5,
-          happiness: 5,
-          discipline: -5,
-          risk: 30,
+          knowledge: 10,
+          risk: -5,
+          xp: 50
+        },
+        feedback: "Conservative choice. While you miss potential gains, you also avoid high volatility and risk."
+      }
+    ]
+  }
+]
+
+// Savings Quest Scenarios
+const savingsQuestScenarios: Scenario[] = [
+  {
+    id: "savings_start",
+    title: "Starting to Save",
+    description: "You want to start saving money. What's your first step?",
+    difficulty: "easy",
+    options: [
+      {
+        text: "Create a budget and track expenses",
+        impact: {
+          savings: 200,
+          discipline: 20,
+          risk: -5,
+          xp: 80
+        },
+        feedback: "Perfect start! Understanding your spending is crucial for effective saving."
+      },
+      {
+        text: "Save whatever is left after spending",
+        impact: {
+          savings: 50,
+          discipline: 5,
+          risk: 10,
           xp: 30
         },
-        feedback: "While stocks can be good, tax-advantaged accounts offer better long-term benefits.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
+        feedback: "This approach is better than not saving, but planning your savings first is more effective."
+      },
+      {
+        text: "Cut all non-essential spending",
+        impact: {
+          savings: 300,
+          happiness: -10,
+          discipline: 15,
+          risk: 0,
+          xp: 50
+        },
+        feedback: "While this saves money, extreme measures might not be sustainable. Balance is key."
+      }
+    ]
+  },
+  {
+    id: "savings_goal",
+    title: "Savings Goal",
+    description: "You want to save for a vacation in 6 months. How do you approach it?",
+    difficulty: "medium",
+    options: [
+      {
+        text: "Set up automatic monthly transfers",
+        impact: {
+          savings: 600,
+          happiness: 10,
+          discipline: 20,
+          risk: -5,
+          xp: 75
+        },
+        feedback: "Excellent! Automation helps maintain consistent savings habits."
+      },
+      {
+        text: "Use a high-yield savings account",
+        impact: {
+          savings: 650,
+          knowledge: 15,
+          discipline: 15,
+          risk: 0,
+          xp: 70
+        },
+        feedback: "Smart thinking! Earning interest while saving helps reach goals faster."
+      },
+      {
+        text: "Take on extra work",
+        impact: {
+          savings: 800,
+          income: 200,
+          happiness: -5,
+          discipline: 10,
+          risk: 5,
+          xp: 60
+        },
+        feedback: "Good initiative! Additional income can accelerate savings, but maintain work-life balance."
+      }
+    ]
+  },
+  {
+    id: "savings_emergency",
+    title: "Emergency Fund Planning",
+    description: "How much should you keep in your emergency fund?",
+    difficulty: "hard",
+    options: [
+      {
+        text: "3-6 months of expenses",
+        impact: {
+          savings: 1000,
+          happiness: 10,
+          discipline: 20,
+          risk: -15,
+          xp: 80
+        },
+        feedback: "Perfect! This is the recommended amount for most situations."
+      },
+      {
+        text: "1 month of expenses",
+        impact: {
+          savings: 300,
+          discipline: 5,
+          risk: 20,
+          xp: 30
+        },
+        feedback: "While better than nothing, this might not be enough for longer emergencies."
+      },
+      {
+        text: "12 months of expenses",
+        impact: {
+          savings: 2000,
+          happiness: -5,
+          discipline: 15,
+          risk: -10,
+          xp: 60
+        },
+        feedback: "Very conservative. While safe, too much in emergency savings might mean missed growth opportunities."
       }
     ]
   }
 ]
 
 // Combine all scenarios
-const allScenarios: Scenario[] = [
+export const scenarios: Scenario[] = [
   ...easyScenarios,
   ...mediumScenarios,
   ...hardScenarios,
+  ...budgetScenarios,
   ...marketMasterScenarios,
   ...savingsQuestScenarios
-]
-
-export const scenarios = allScenarios
-
-export const marketScenarios: Scenario[] = [
-  {
-    id: "stock_basics",
-    title: "Stock Market Basics",
-    description: "You're new to investing and want to start with stocks. What's your first move?",
-    difficulty: "easy",
-    options: [
-      {
-        text: "Research index funds",
-        impact: {
-          portfolio: 1000,
-          cash: -1000,
-          knowledge: 20,
-          risk: 20,
-          xp: 50
-        },
-        feedback: "Great choice! Index funds are a low-risk way to start investing in the stock market.",
-        miniGame: {
-          type: "stock_picker",
-          bonus: 20
-        }
-      },
-      {
-        text: "Buy individual stocks",
-        impact: {
-          portfolio: 2000,
-          cash: -2000,
-          knowledge: 10,
-          risk: 60,
-          xp: 30
-        },
-        feedback: "Individual stocks can be risky for beginners. Consider starting with index funds first.",
-        miniGame: {
-          type: "stock_picker",
-          bonus: 30
-        }
-      },
-      {
-        text: "Consult a financial advisor",
-        impact: {
-          portfolio: 0,
-          cash: -500,
-          knowledge: 30,
-          risk: 10,
-          xp: 40
-        },
-        feedback: "Professional advice is valuable, but make sure to understand the basics yourself too.",
-        miniGame: {
-          type: "budget_planner",
-          bonus: 15
-        }
-      }
-    ]
-  },
-  {
-    id: "market_volatility",
-    title: "Market Volatility",
-    description: "The market is experiencing high volatility. How do you react?",
-    difficulty: "medium",
-    options: [
-      {
-        text: "Stay invested",
-        impact: {
-          portfolio: 1500,
-          cash: 0,
-          knowledge: 15,
-          risk: 30,
-          xp: 80
-        },
-        feedback: "Smart move! Staying invested during volatility often leads to better long-term returns."
-      },
-      {
-        text: "Sell everything",
-        impact: {
-          portfolio: -1000,
-          cash: 1000,
-          knowledge: 5,
-          risk: 0,
-          xp: 20
-        },
-        feedback: "Selling during market dips can lock in losses. Consider your long-term goals."
-      },
-      {
-        text: "Buy more",
-        impact: {
-          portfolio: 2000,
-          cash: -2000,
-          knowledge: 10,
-          risk: 50,
-          xp: 60
-        },
-        feedback: "Buying during dips can be good, but make sure you have a diversified portfolio."
-      }
-    ]
-  },
-  {
-    id: "dividend_investing",
-    title: "Dividend Investing",
-    description: "You're considering dividend stocks for passive income. What's your approach?",
-    difficulty: "hard",
-    options: [
-      {
-        text: "Research dividend aristocrats",
-        impact: {
-          portfolio: 1000,
-          cash: 500,
-          knowledge: 20,
-          risk: 30,
-          xp: 70
-        },
-        feedback: "Dividend aristocrats are reliable companies with a history of increasing dividends."
-      },
-      {
-        text: "Focus on high yield",
-        impact: {
-          portfolio: 2000,
-          cash: 1000,
-          knowledge: 10,
-          risk: 60,
-          xp: 40
-        },
-        feedback: "High yield can be tempting, but watch out for unsustainable dividend rates."
-      },
-      {
-        text: "Diversify across sectors",
-        impact: {
-          portfolio: 1500,
-          cash: 800,
-          knowledge: 15,
-          risk: 40,
-          xp: 60
-        },
-        feedback: "Diversification helps reduce risk while maintaining good income potential."
-      }
-    ]
-  }
-]
-
-export const savingScenarios: Scenario[] = [
-  {
-    id: "emergency_fund",
-    title: "Emergency Fund Challenge",
-    description: "You've been saving for an emergency fund, but an unexpected expense has come up. How will you handle it?",
-    difficulty: "easy",
-    options: [
-      {
-        text: "Use emergency fund and stop saving",
-        impact: {
-          savings: -1000,
-          debt: 0,
-          income: 0,
-          discipline: -10,
-          risk: 20,
-          xp: 25
-        },
-        feedback: "While using your emergency fund is appropriate for emergencies, stopping your savings habit could leave you vulnerable to future unexpected expenses.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
-      },
-      {
-        text: "Use emergency fund and increase savings",
-        impact: {
-          savings: -500,
-          debt: 0,
-          income: 0,
-          discipline: 15,
-          risk: -10,
-          xp: 60
-        },
-        feedback: "Smart decision! Using your emergency fund for its intended purpose and then rebuilding it shows good financial planning and discipline.",
-        miniGame: {
-          type: "budget_planner",
-          bonus: 25
-        }
-      },
-      {
-        text: "Take on debt instead of using emergency fund",
-        impact: {
-          savings: 0,
-          debt: 1000,
-          income: 0,
-          discipline: -10,
-          risk: 25,
-          xp: 15
-        },
-        feedback: "Taking on debt when you have an emergency fund defeats its purpose. The emergency fund is there to help you avoid debt in unexpected situations.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
-      }
-    ]
-  },
-  {
-    id: "savings_goal",
-    title: "Savings Goal Challenge",
-    description: "You've set a goal to save for a major purchase. How will you approach it?",
-    difficulty: "medium",
-    options: [
-      {
-        text: "Cut all non-essential spending",
-        impact: {
-          savings: 800,
-          debt: 0,
-          income: 0,
-          discipline: 20,
-          risk: -5,
-          xp: 50
-        },
-        feedback: "Cutting non-essential spending is effective, but make sure your cuts are sustainable long-term.",
-        miniGame: {
-          type: "budget_planner",
-          bonus: 25
-        }
-      },
-      {
-        text: "Find ways to increase income",
-        impact: {
-          savings: 500,
-          debt: 0,
-          income: 300,
-          discipline: 15,
-          risk: -5,
-          xp: 60
-        },
-        feedback: "Increasing income while maintaining good spending habits is a great way to reach your savings goals faster.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 15
-        }
-      },
-      {
-        text: "Take on a side job",
-        impact: {
-          savings: 1000,
-          debt: 0,
-          income: 800,
-          discipline: 10,
-          risk: 10,
-          xp: 40
-        },
-        feedback: "A side job can boost your savings, but be careful not to burn out. Balance is important.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 10
-        }
-      }
-    ]
-  },
-  {
-    id: "debt_management",
-    title: "Debt Management Challenge",
-    description: "You have multiple debts to manage. What's your strategy?",
-    difficulty: "hard",
-    options: [
-      {
-        text: "Pay highest interest first",
-        impact: {
-          savings: -500,
-          debt: -1000,
-          income: 0,
-          discipline: 15,
-          risk: -10,
-          xp: 60
-        },
-        feedback: "Paying off high-interest debt first is mathematically optimal and saves you money in the long run.",
-        miniGame: {
-          type: "budget_planner",
-          bonus: 25
-        }
-      },
-      {
-        text: "Pay smallest balance first",
-        impact: {
-          savings: -300,
-          debt: -500,
-          income: 0,
-          discipline: 10,
-          risk: -5,
-          xp: 40
-        },
-        feedback: "The snowball method can provide psychological wins, but may cost more in interest.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 15
-        }
-      },
-      {
-        text: "Make minimum payments only",
-        impact: {
-          savings: 0,
-          debt: -200,
-          income: 0,
-          discipline: -10,
-          risk: 20,
-          xp: 15
-        },
-        feedback: "Minimum payments keep you in debt longer and cost more in interest. Consider paying more when possible.",
-        miniGame: {
-          type: "savings_challenge",
-          bonus: 5
-        }
-      }
-    ]
-  }
 ]
 
 export type GameProgress = {
