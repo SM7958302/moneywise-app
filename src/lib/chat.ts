@@ -1,5 +1,4 @@
 import OpenAI from 'openai'
-import { ChatMessage } from '@prisma/client'
 import { prisma } from './prisma'
 
 const openai = new OpenAI({
@@ -26,13 +25,15 @@ Always encourage good financial habits and responsible money management.`
 export async function getChatResponse(userId: string, message: string) {
   try {
     // Save user message
-    await prisma.chatMessage.create({
-      data: {
-        userId,
-        content: message,
-        role: 'user'
-      }
-    })
+    const userMessage = await prisma.$transaction([
+      prisma.chatMessage.create({
+        data: {
+          userId,
+          content: message,
+          role: 'user'
+        }
+      })
+    ])
 
     // Get chat history
     const history = await prisma.chatMessage.findMany({
@@ -47,7 +48,7 @@ export async function getChatResponse(userId: string, message: string) {
 
     // Convert history to OpenAI format
     const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system' as const, content: SYSTEM_PROMPT },
       ...history.map(msg => ({
         role: msg.role as 'user' | 'assistant',
         content: msg.content

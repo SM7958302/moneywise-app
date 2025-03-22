@@ -17,7 +17,10 @@ export const config = {
     "/dashboard/:path*",
     "/learn/:path*",
     "/profile/:path*",
-    "/api/user/:path*",
-    "/api/progress/:path*"
+    "/progress/:path*",
+    "/games/:path*",
+    "/api/progress/:path*",
+    "/api/games/:path*",
+    "/api/chat/:path*"
   ]
 } 
