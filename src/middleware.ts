@@ -1,5 +1,6 @@
 import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
+import { get } from '@vercel/edge-config'
 
 export default withAuth(
   function middleware(req) {
@@ -21,6 +22,12 @@ export const config = {
     "/games/:path*",
     "/api/progress/:path*",
     "/api/games/:path*",
-    "/api/chat/:path*"
+    "/api/chat/:path*",
+    "/welcome"
   ]
+}
+
+export async function middleware() {
+  const greeting = await get('greeting')
+  return NextResponse.json(greeting)
 } 
