@@ -78,8 +78,8 @@ export default function MarketMasterGame() {
     setPlayerStats(prev => {
       const newStats = {
         ...prev,
-        portfolio: Math.max(0, prev.portfolio + option.impact.portfolio),
-        cash: Math.max(0, prev.cash + option.impact.cash),
+        portfolio: Math.max(0, prev.portfolio + (option.impact.portfolio ?? 0)),
+        cash: Math.max(0, prev.cash + (option.impact.cash ?? 0)),
         knowledge: Math.min(100, Math.max(0, prev.knowledge + (option.impact.knowledge ?? 0))),
         risk: Math.min(100, Math.max(0, prev.risk + option.impact.risk)),
         xp: prev.xp + option.impact.xp,
