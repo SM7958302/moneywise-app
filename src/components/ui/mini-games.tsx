@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 
 interface MiniGameProps {
-  type: "budget_planner" | "stock_picker" | "savings_challenge"
+  type?: "budget_planner" | "stock_picker" | "savings_challenge"
   onComplete: (result: number) => void
   onSkip: () => void
 }
