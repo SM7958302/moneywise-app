@@ -9,7 +9,7 @@ import { learningModules } from "@/lib/game-data"
 import { LearningModule } from "@/components/learning/LearningModule"
 
 export default function LearnPage() {
-  const { progress } = useGame()
+  const { progress, xp } = useGame()
   const [selectedModule, setSelectedModule] = useState<string | null>(null)
 
   return (
@@ -41,7 +41,7 @@ export default function LearnPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {learningModules.map(module => {
               const completedLessons = module.lessons.filter(lesson =>
-                progress.completedLessons.includes(lesson.id)
+                progress.completedScenarios.includes(lesson.id)
               ).length
               const totalLessons = module.lessons.length
               const isComplete = completedLessons === totalLessons
@@ -75,7 +75,7 @@ export default function LearnPage() {
                           <li
                             key={lesson.id}
                             className={
-                              progress.completedLessons.includes(lesson.id)
+                              progress.completedScenarios.includes(lesson.id)
                                 ? "text-green-600"
                                 : ""
                             }
@@ -102,12 +102,12 @@ export default function LearnPage() {
                 <div>
                   <p className="font-medium">Total Lessons Completed</p>
                   <p className="text-2xl font-bold">
-                    {progress.completedLessons.length}
+                    {progress.completedScenarios.length}
                   </p>
                 </div>
                 <div>
                   <p className="font-medium">XP Earned</p>
-                  <p className="text-2xl font-bold">{progress.xp}</p>
+                  <p className="text-2xl font-bold">{xp}</p>
                 </div>
               </div>
               <div className="p-4 bg-blue-50 rounded-lg">
